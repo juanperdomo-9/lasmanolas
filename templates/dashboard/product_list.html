@@ -1,0 +1,77 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Productos{% endblock %}
+{% block page_title %}Productos{% endblock %}
+{% block page_subtitle %}<p class="text-sm text-white/40">{{ page_obj.paginator.count }} producto{{ page_obj.paginator.count|pluralize }} en total.</p>{% endblock %}
+{% block page_actions %}
+<a href="{% url 'dashboard:product_create' %}" class="btn-lift shrink-0 rounded-full bg-aurora px-5 py-2.5 text-sm font-bold text-white shadow-[var(--shadow-button)]">
+    + Cargar producto
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<form method="get" class="mb-6 flex max-w-md items-center gap-2 rounded-full border border-white/10 bg-white/5 p-2">
+    <svg class="ml-3 h-4 w-4 shrink-0 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" name="q" value="{{ query }}" placeholder="Buscar producto o categoría…"
+           class="w-full bg-transparent py-1.5 text-sm text-white placeholder:text-white/30 focus:outline-none">
+    {% if query %}<a href="{% url 'dashboard:product_list' %}" class="shrink-0 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold text-white/70">Borrar</a>{% endif %}
+</form>
+
+<div class="dash-card overflow-hidden">
+    <div class="grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-4 border-b border-white/10 px-5 py-3 text-xs font-bold uppercase tracking-wider text-white/40">
+        <span></span>
+        <span>Producto</span>
+        <span>Precio</span>
+        <span>Stock</span>
+        <span class="text-right">Acciones</span>
+    </div>
+
+    {% for product in page_obj %}
+    <div class="grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-4 border-b border-white/5 px-5 py-3 last:border-0 hover:bg-white/[.03]">
+        <div class="h-11 w-11 overflow-hidden rounded-xl bg-white/10">
+            {% if product.main_image %}<img src="{{ product.main_image.url }}" class="h-full w-full object-cover">{% endif %}
+        </div>
+        <div class="min-w-0">
+            <p class="truncate text-sm font-bold">{{ product.name }}</p>
+            <p class="truncate text-xs text-white/40">{{ product.category.parent.name }} / {{ product.category.name }}</p>
+            <div class="mt-1 flex gap-1.5">
+                {% if not product.is_active %}<span class="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-white/50">Oculto</span>{% endif %}
+                {% if product.is_featured %}<span class="rounded-full bg-lilac-500/15 px-2 py-0.5 text-[10px] font-bold text-lilac-300">Destacado</span>{% endif %}
+            </div>
+        </div>
+        <p class="whitespace-nowrap text-sm font-bold">${{ product.price }}</p>
+        <span class="whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-bold
+            {% if product.in_stock %}bg-sky-500/15 text-sky-300{% else %}bg-blush-500/15 text-blush-300{% endif %}">
+            {% if product.in_stock %}{{ product.total_stock }} unid.{% else %}Sin stock{% endif %}
+        </span>
+        <div class="flex items-center justify-end gap-1">
+            <a href="{% url 'dashboard:product_edit' product.pk %}" class="flex h-8 w-8 items-center justify-center rounded-full text-white/40 transition hover:bg-white/10 hover:text-white">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </a>
+            <a href="{% url 'dashboard:product_delete' product.pk %}" class="flex h-8 w-8 items-center justify-center rounded-full text-white/40 transition hover:bg-blush-500/15 hover:text-blush-300">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="px-5 py-14 text-center text-white/40">
+        {% if query %}No encontramos nada con "{{ query }}".{% else %}Todavía no cargaste productos.{% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<div class="mt-5 flex items-center justify-center gap-2">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="rounded-full bg-white/5 px-4 py-2 text-xs font-bold text-white/70 hover:bg-white/10">← Anterior</a>
+    {% endif %}
+    <span class="text-xs font-bold text-white/40">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="rounded-full bg-white/5 px-4 py-2 text-xs font-bold text-white/70 hover:bg-white/10">Siguiente →</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

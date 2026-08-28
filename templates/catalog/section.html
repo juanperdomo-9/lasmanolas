@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ section.name }} | {{ site_config.site_name }}{% endblock %}
+
+{% block content %}
+
+<section class="bg-sky-50 px-4 pb-8 pt-8">
+    <div class="mx-auto max-w-7xl">
+        <nav class="text-xs font-semibold text-ink-soft">
+            <a href="{% url 'core:home' %}" class="hover:text-lilac-700">Inicio</a>
+            <span class="mx-2">/</span>
+            <span class="text-ink">{{ section.name }}</span>
+        </nav>
+
+        <h1 class="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">{{ section.name }}</h1>
+        <p class="mt-3 max-w-lg text-ink-soft">Explorá todas las prendas de {{ section.name|lower }}, organizadas por categoría.</p>
+
+        <!-- BUSCADOR -->
+        <form method="get" class="mt-7 flex max-w-xl items-center gap-2 rounded-full bg-surface p-2 shadow-[var(--shadow-card)]">
+            <svg class="ml-3 h-5 w-5 shrink-0 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" name="q" value="{{ query }}" placeholder="Buscar en {{ section.name|lower }}… (ej: remera celeste)"
+                   class="w-full bg-transparent py-2 text-sm text-ink placeholder:text-ink-soft/60">
+            {% if query %}
+                <a href="{{ section.get_absolute_url }}" class="shrink-0 rounded-full bg-surface-soft px-3 py-2 text-xs font-bold text-ink-soft hover:bg-blush-100">Borrar</a>
+            {% endif %}
+            <button type="submit" class="btn-lift shrink-0 rounded-full bg-aurora px-5 py-2.5 text-sm font-bold text-white">Buscar</button>
+        </form>
+
+        <!-- CHIPS DE ACCESO RÁPIDO -->
+        {% if subcategories %}
+        <div class="mt-5 flex flex-wrap gap-2">
+            {% for sub in subcategories %}
+            <a href="{{ sub.get_absolute_url }}" class="btn-lift rounded-full bg-surface px-4 py-2 text-sm font-bold text-ink shadow-[var(--shadow-card)] hover:bg-blush-100">
+                {{ sub.name }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% if query %}
+<!-- ============================================= -->
+<!-- RESULTADOS DE BÚSQUEDA -->
+<!-- ============================================= -->
+<section class="container py-10">
+    <p class="text-sm font-semibold text-ink-soft">
+        {{ search_results|length }} resultado{{ search_results|length|pluralize }} para
+        <span class="font-bold text-ink">“{{ query }}”</span>
+    </p>
+
+    {% if search_results %}
+    <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4" data-stagger>
+        {% for product in search_results %}
+        {% include "catalog/includes/product_card.html" %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="reveal mt-6 flex flex-col items-center gap-4 rounded-[32px] border border-dashed border-lilac-300 bg-surface-soft py-16 text-center">
+        <p class="text-lg font-bold text-ink">No encontramos nada con “{{ query }}”</p>
+        <p class="max-w-sm text-sm text-ink-soft">Probá con otra palabra, o escribinos y te ayudamos a encontrarlo.</p>
+        <a href="{{ site_config.whatsapp_link }}" target="_blank" rel="noopener" class="btn-lift mt-1 rounded-full bg-aurora px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-button)]">
+            Hablar por WhatsApp
+        </a>
+    </div>
+    {% endif %}
+</section>
+
+{% else %}
+<!-- ============================================= -->
+<!-- ESTANTES POR SUBCATEGORÍA -->
+<!-- ============================================= -->
+{% if shelves %}
+<div class="py-6">
+    {% for shelf in shelves %}
+    <section class="container py-8">
+        <div class="reveal flex items-end justify-between gap-4">
+            <h2 class="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">{{ shelf.subcategory.name }}</h2>
+            <a href="{{ shelf.subcategory.get_absolute_url }}" class="shrink-0 whitespace-nowrap text-sm font-bold text-lilac-700 hover:text-lilac-500">
+                Ver todo →
+            </a>
+        </div>
+
+        <div class="-mx-4 mt-5 flex snap-x gap-5 overflow-x-auto px-4 pb-3 [scrollbar-width:thin]" data-stagger>
+            {% for product in shelf.products %}
+            <div class="w-[220px] shrink-0 snap-start sm:w-[240px]">
+                {% include "catalog/includes/product_card.html" %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+</div>
+{% else %}
+<section class="container py-14">
+    <div class="reveal flex flex-col items-center gap-4 rounded-[32px] border border-dashed border-lilac-300 bg-surface-soft py-16 text-center">
+        <p class="text-lg font-bold text-ink">Todavía no hay productos publicados acá</p>
+        <p class="max-w-sm text-sm text-ink-soft">Estamos sumando el catálogo de {{ section.name|lower }}. Escribinos y te contamos qué está disponible.</p>
+        <a href="{{ site_config.whatsapp_link }}" target="_blank" rel="noopener" class="btn-lift mt-1 rounded-full bg-aurora px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-button)]">
+            Hablar por WhatsApp
+        </a>
+    </div>
+</section>
+{% endif %}
+{% endif %}
+
+{% endblock %}

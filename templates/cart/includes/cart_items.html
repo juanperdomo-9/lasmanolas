@@ -1,0 +1,40 @@
+{% load static %}
+{% if cart %}
+    <div class="flex flex-col divide-y divide-border">
+        {% for item in cart %}
+        <div class="flex gap-4 py-5">
+            <div class="h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-surface-soft">
+                {% if item.variant.product.main_image %}
+                    <img src="{{ item.variant.product.main_image.url }}" alt="{{ item.variant.product.name }}" class="h-full w-full object-cover">
+                {% endif %}
+            </div>
+            <div class="flex flex-1 flex-col">
+                <p class="font-bold leading-snug text-ink">{{ item.variant.product.name }}</p>
+                <p class="mt-0.5 text-xs text-ink-soft">
+                    {{ item.variant.size }}{% if item.variant.color %} · {{ item.variant.color }}{% endif %} · x{{ item.quantity }}
+                </p>
+                <div class="mt-auto flex items-center justify-between pt-2">
+                    <p class="font-extrabold text-lilac-700">${{ item.subtotal }}</p>
+                    <form method="post" action="{% url 'cart:remove' item.variant.id %}" data-cart-mutate-form>
+                        {% csrf_token %}
+                        <button type="submit" class="text-xs font-bold text-ink-soft transition hover:text-blush-700">
+                            Quitar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="flex h-full flex-col items-center justify-center gap-4 text-center">
+        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-surface-soft">
+            <svg class="h-7 w-7 text-lilac-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+        </div>
+        <p class="font-semibold text-ink">Todavía no agregaste nada</p>
+        <p class="max-w-[220px] text-sm text-ink-soft">Elegí una sección y sumá tu ropita favorita al carrito.</p>
+        <a data-cart-close href="{% url 'core:home' %}" class="btn-lift mt-2 rounded-full bg-aurora px-5 py-2.5 text-sm font-bold text-white shadow-[var(--shadow-button)]">
+            Ver catálogo
+        </a>
+    </div>
+{% endif %}

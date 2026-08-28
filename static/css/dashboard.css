@@ -1,0 +1,54 @@
+/* ==========================================
+   DASHBOARD — estilos propios del panel (/panel/).
+   Se carga DESPUES de output.css y styles.css. Todo dentro de @layer base
+   por la misma razon que styles.css: si no, pisa las utilidades de
+   Tailwind sin importar especificidad.
+========================================== */
+
+@layer base {
+
+    .dash-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-radius: 1rem;
+        padding: 0.65rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: rgba(255, 255, 255, .55);
+        transition: background-color .25s ease, color .25s ease;
+    }
+
+    .dash-nav-link:hover {
+        background: rgba(255, 255, 255, .06);
+        color: #fff;
+    }
+
+    .dash-nav-link--active {
+        background: rgba(255, 255, 255, .1);
+        color: #fff;
+    }
+
+    /* Tarjeta base reusada en resumen, listados y forms del panel */
+    .dash-card {
+        border-radius: 1.75rem;
+        border: 1px solid rgba(255, 255, 255, .1);
+        background: rgba(255, 255, 255, .04);
+    }
+
+    /* Fila de un formset (variante o imagen) que se puede marcar para borrar */
+    .dash-formset-row.is-marked-delete {
+        opacity: .35;
+    }
+
+    /* SELECTS — el <select> cerrado hereda el texto blanco de INPUT_CLASSES
+       (se ve bien contra el fondo oscuro del panel), pero el desplegable
+       nativo lo pinta el navegador con fondo claro y esas mismas <option>
+       heredaban el blanco → texto invisible. Se fuerza contraste oscuro
+       solo en las <option>, sin tocar cómo se ve el select cerrado. */
+    select option {
+        color: var(--color-ink);
+        background-color: var(--color-surface);
+    }
+
+}

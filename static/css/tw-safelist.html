@@ -1,0 +1,21 @@
+<!--
+    SAFELIST PARA TAILWIND — NO ES UNA PÁGINA REAL, NO SE SIRVE A NADIE.
+
+    Tailwind v4 no escanea archivos .py bajo ningún formato de @source
+    (ni por directorio ni con glob "*.py" — se probó y no funciona), y
+    dashboard/forms.py arma las clases de los inputs como strings de
+    Python (StyledFormMixin), no en templates. Sin este archivo, esas
+    clases nunca se compilarían a output.css y los forms del panel se
+    verían sin estilo.
+
+    Si se agrega o cambia una clase en dashboard/forms.py, hay que
+    reflejarla acá también.
+
+    w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white
+    placeholder:text-white/30 transition focus:border-lilac-400 focus:outline-none
+    focus:ring-2 focus:ring-lilac-400/30
+    h-5 w-5 rounded border-white/20 bg-white/5 text-lilac-500 focus:ring-lilac-400
+    block w-full text-sm text-white/60 file:mr-4 file:rounded-full file:border-0
+    file:bg-lilac-500/20 file:px-4 file:py-2 file:text-sm file:font-bold
+    file:text-lilac-300 hover:file:bg-lilac-500/30
+-->

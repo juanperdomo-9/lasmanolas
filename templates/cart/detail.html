@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tu carrito | {{ site_config.site_name }}{% endblock %}
+
+{% block content %}
+
+<section class="container py-10">
+    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">Tu carrito</h1>
+
+    {% if cart %}
+    <div class="mt-10 grid gap-10 lg:grid-cols-[1fr_360px]">
+
+        <!-- ============================================= -->
+        <!-- ITEMS (forms normales: qty + quitar) -->
+        <!-- ============================================= -->
+        <div class="flex flex-col divide-y divide-border rounded-[28px] bg-surface p-2 shadow-[var(--shadow-card)] sm:p-4">
+            {% for item in cart %}
+            <div class="flex flex-col gap-4 py-5 sm:flex-row sm:items-center">
+                <div class="h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-surface-soft">
+                    {% if item.variant.product.main_image %}
+                        <img src="{{ item.variant.product.main_image.url }}" alt="{{ item.variant.product.name }}" class="h-full w-full object-cover">
+                    {% endif %}
+                </div>
+
+                <div class="flex-1">
+                    <a href="{{ item.variant.product.get_absolute_url }}" class="font-bold text-ink hover:text-lilac-700">{{ item.variant.product.name }}</a>
+                    <p class="mt-0.5 text-xs text-ink-soft">
+                        {{ item.variant.size }}{% if item.variant.color %} · {{ item.variant.color }}{% endif %}
+                    </p>
+                    <p class="mt-1 font-extrabold text-lilac-700">${{ item.variant.product.price }}</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <form method="post" action="{% url 'cart:update' item.variant.id %}" data-qty-form class="flex items-center gap-1.5">
+                        {% csrf_token %}
+                        <button type="button" data-qty-step="-1" aria-label="Restar uno"
+                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-soft text-lg font-bold leading-none text-ink-soft transition hover:bg-lilac-100 disabled:cursor-not-allowed disabled:opacity-40"
+                                {% if item.quantity <= 1 %}disabled{% endif %}>−</button>
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.variant.stock }}" data-qty-input
+                               class="h-9 w-11 rounded-full border-2 border-border bg-surface text-center text-sm font-bold text-ink [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
+                        <button type="button" data-qty-step="1" aria-label="Sumar uno"
+                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-soft text-lg font-bold leading-none text-ink-soft transition hover:bg-lilac-100 disabled:cursor-not-allowed disabled:opacity-40"
+                                {% if item.quantity >= item.variant.stock %}disabled{% endif %}>+</button>
+                    </form>
+
+                    <form method="post" action="{% url 'cart:remove' item.variant.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="rounded-full bg-surface-soft px-3 py-2.5 text-xs font-bold text-blush-700 hover:bg-blush-100">
+                            Quitar
+                        </button>
+                    </form>
+                </div>
+
+                <p class="w-24 text-right font-extrabold text-ink">${{ item.subtotal }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- ============================================= -->
+        <!-- RESUMEN -->
+        <!-- ============================================= -->
+        <aside class="h-fit rounded-[28px] bg-surface p-6 shadow-[var(--shadow-card)]">
+            <p class="text-lg font-bold text-ink">Resumen</p>
+            <div class="mt-4 flex items-center justify-between text-sm text-ink-soft">
+                <span>Subtotal</span>
+                <span class="font-bold text-ink">${{ cart.get_total }}</span>
+            </div>
+            <div class="mt-2 flex items-center justify-between text-sm text-ink-soft">
+                <span>Envío</span>
+                <span class="font-bold text-ink">A coordinar</span>
+            </div>
+            <div class="mt-4 flex items-center justify-between border-t border-border pt-4 text-base font-extrabold text-ink">
+                <span>Total</span>
+                <span>${{ cart.get_total }}</span>
+            </div>
+
+            <a href="{% url 'orders:checkout' %}"
+               class="btn-lift mt-6 flex w-full items-center justify-center rounded-full bg-aurora px-5 py-3.5 text-sm font-bold text-white shadow-[var(--shadow-button)]">
+                Continuar compra
+            </a>
+        </aside>
+    </div>
+    {% else %}
+    <div class="reveal mt-10 flex flex-col items-center gap-4 rounded-[32px] border border-dashed border-lilac-300 bg-surface-soft py-20 text-center">
+        <p class="text-lg font-bold text-ink">Tu carrito está vacío</p>
+        <p class="max-w-sm text-sm text-ink-soft">Explorá el catálogo y encontrá algo lindo para tu bebé, niño o adolescente.</p>
+        <a href="{% url 'core:home' %}" class="btn-lift mt-1 rounded-full bg-aurora px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-button)]">
+            Ver catálogo
+        </a>
+    </div>
+    {% endif %}
+</section>
+
+{% endblock %}

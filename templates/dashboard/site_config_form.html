@@ -1,0 +1,73 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Configuración{% endblock %}
+{% block page_title %}Configuración del sitio{% endblock %}
+{% block page_subtitle %}<p class="text-sm text-white/40">WhatsApp, envío y datos para pagos manuales.</p>{% endblock %}
+
+{% block dashboard_content %}
+
+<form method="post" class="mx-auto max-w-2xl space-y-6">
+    {% csrf_token %}
+
+    <div class="dash-card space-y-5 p-7">
+        <p class="text-sm font-extrabold uppercase tracking-wider text-lilac-300">Sitio</p>
+        <div>
+            <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Nombre del sitio</label>
+            {{ form.site_name }}
+        </div>
+        <div>
+            <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Bajada (debajo del logo, en el home)</label>
+            {{ form.tagline }}
+        </div>
+    </div>
+
+    <div class="dash-card space-y-5 p-7">
+        <p class="text-sm font-extrabold uppercase tracking-wider text-lilac-300">Contacto</p>
+        <div>
+            <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">WhatsApp (solo números, con código de país)</label>
+            {{ form.whatsapp_number }}
+            <p class="mt-1.5 text-xs text-white/40">Ejemplo: 5491122334455</p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Instagram (link completo)</label>
+                {{ form.instagram_url }}
+            </div>
+            <div>
+                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Email de contacto</label>
+                {{ form.contact_email }}
+            </div>
+        </div>
+    </div>
+
+    <div class="dash-card space-y-5 p-7">
+        <p class="text-sm font-extrabold uppercase tracking-wider text-lilac-300">Envío</p>
+        <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Costo de mensajería (Andreani)</label>
+                {{ form.courier_cost }}
+                <p class="mt-1.5 text-xs text-white/40">El envío propio (La Plata / Magdalena y alrededores) se coordina aparte, no tiene costo fijo.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dash-card space-y-5 p-7">
+        <p class="text-sm font-extrabold uppercase tracking-wider text-lilac-300">Pagos manuales</p>
+        <div>
+            <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Datos para transferencia</label>
+            {{ form.bank_transfer_info }}
+            <p class="mt-1.5 text-xs text-white/40">CBU, alias y titular. Se muestra en el checkout.</p>
+        </div>
+        <div>
+            <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Instrucciones para efectivo</label>
+            {{ form.cash_payment_info }}
+        </div>
+    </div>
+
+    <button type="submit" class="btn-lift rounded-full bg-aurora px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-button)]">
+        Guardar cambios
+    </button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Confirmar{% endblock %}
+{% block page_title %}Confirmar{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="dash-card mx-auto max-w-md p-7 text-center">
+    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blush-500/15 text-blush-300">
+        <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+    </div>
+    <p class="mt-4 text-lg font-extrabold">{{ title }}</p>
+    <p class="mt-2 text-sm text-white/50">{{ warning }}</p>
+
+    <form method="post" class="mt-6 flex items-center justify-center gap-3">
+        {% csrf_token %}
+        <button type="submit" class="btn-lift rounded-full bg-blush-500 px-6 py-3 text-sm font-bold text-white shadow-[0_10px_26px_rgba(239,141,182,.35)]">
+            Sí, eliminar
+        </button>
+        <a href="{% url cancel_url %}" class="rounded-full px-6 py-3 text-sm font-bold text-white/50 transition hover:text-white">
+            Cancelar
+        </a>
+    </form>
+</div>
+
+{% endblock %}

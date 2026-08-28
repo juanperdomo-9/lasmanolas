@@ -1,0 +1,27 @@
+{% load static %}
+<div id="cartOverlay" class="drawer-overlay fixed inset-0 z-[60] hidden bg-ink/30 opacity-0 backdrop-blur-sm">
+    <aside id="cartPanel" class="drawer-panel absolute right-0 top-0 flex h-full w-full max-w-md translate-x-full flex-col bg-cream shadow-2xl">
+
+        <div class="flex items-center justify-between border-b border-border px-6 py-5">
+            <h2 class="text-lg font-bold">Tu carrito</h2>
+            <button data-cart-close class="flex h-9 w-9 items-center justify-center rounded-full bg-surface-soft text-ink-soft hover:bg-blush-100">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6 6 18"/></svg>
+            </button>
+        </div>
+
+        <div id="cartItems" class="flex-1 overflow-y-auto px-6 py-6">
+            {% include "cart/includes/cart_items.html" %}
+        </div>
+
+        <div class="border-t border-border px-6 py-5">
+            <div class="mb-4 flex items-center justify-between text-sm font-semibold text-ink-soft">
+                <span>Subtotal</span>
+                <span id="cartTotal" class="text-base font-extrabold text-ink">${{ cart.get_total|default:0 }}</span>
+            </div>
+            <a id="cartViewLink" href="{% url 'cart:detail' %}"
+               class="btn-lift flex w-full items-center justify-center rounded-full bg-aurora px-5 py-3.5 text-sm font-bold text-white shadow-[var(--shadow-button)] {% if not cart %}opacity-60 pointer-events-none{% endif %}">
+                Ver carrito
+            </a>
+        </div>
+    </aside>
+</div>

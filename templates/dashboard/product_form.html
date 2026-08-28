@@ -1,0 +1,121 @@
+{% extends "dashboard/base.html" %}
+{% load static cache_bust %}
+
+{% block title %}{% if is_new %}Nuevo producto{% else %}Editar producto{% endif %}{% endblock %}
+{% block page_title %}{% if is_new %}Nuevo producto{% else %}Editar "{{ product.name }}"{% endif %}{% endblock %}
+{% block page_actions %}
+{% if not is_new %}
+<a href="{{ product.get_absolute_url }}" target="_blank" rel="noopener" class="shrink-0 rounded-full bg-white/10 px-5 py-2.5 text-sm font-bold text-white/80 hover:bg-white/15">
+    Ver en el sitio ↗
+</a>
+{% endif %}
+{% endblock %}
+
+{% block dashboard_content %}
+
+{% if save_errors %}
+<div class="mb-6 rounded-2xl border border-blush-500/30 bg-blush-500/10 p-5">
+    <p class="font-bold text-blush-300">No se pudo guardar — revisá esto:</p>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-blush-200">
+        {% for err in save_errors %}<li>{{ err }}</li>{% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="space-y-6">
+    {% csrf_token %}
+
+    <!-- ============================================= -->
+    <!-- DATOS DEL PRODUCTO -->
+    <!-- ============================================= -->
+    <div class="dash-card space-y-5 p-7">
+        <p class="text-sm font-extrabold uppercase tracking-wider text-lilac-300">Datos del producto</p>
+
+        <div>
+            <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Categoría</label>
+            {{ form.category }}
+            {% for error in form.category.errors %}<p class="mt-1 text-xs font-semibold text-blush-300">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div>
+            <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Nombre</label>
+            {{ form.name }}
+            {% for error in form.name.errors %}<p class="mt-1 text-xs font-semibold text-blush-300">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div>
+            <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Descripción</label>
+            {{ form.description }}
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Precio</label>
+                {{ form.price }}
+                {% for error in form.price.errors %}<p class="mt-1 text-xs font-semibold text-blush-300">{{ error }}</p>{% endfor %}
+            </div>
+            <div>
+                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Precio anterior (oferta)</label>
+                {{ form.compare_at_price }}
+                <p class="mt-1.5 text-xs text-white/40">Completalo solo si está en oferta: se muestra tachado.</p>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-6 pt-2">
+            <label class="flex items-center gap-2 text-sm font-semibold text-white/80">{{ form.is_active }} Publicado (visible en el sitio)</label>
+            <label class="flex items-center gap-2 text-sm font-semibold text-white/80">{{ form.is_featured }} Destacado (aparece en la home)</label>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- COLORES: cada color con sus talles+stock y sus fotos juntos -->
+    <!-- ============================================= -->
+    <div class="dash-card space-y-5 p-7" id="colorGroupsSection">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-extrabold uppercase tracking-wider text-lilac-300">Colores, talles y fotos</p>
+                <p class="mt-1 text-xs text-white/40">Por cada color: qué talles vienen, con cuánto stock, y sus fotos. "General" es para lo que no depende del color.</p>
+            </div>
+            <button type="button" id="addColorGroupBtn" data-quick-create-url="{% url 'dashboard:color_quick_create' %}" class="btn-lift shrink-0 rounded-full bg-aurora px-5 py-2.5 text-xs font-bold text-white shadow-[var(--shadow-button)]">
+                + Agregar color
+            </button>
+        </div>
+
+        {{ image_formset.management_form }}
+        {% if image_formset.non_form_errors %}<p class="text-xs font-semibold text-blush-300">{{ image_formset.non_form_errors }}</p>{% endif %}
+        {{ variant_formset.management_form }}
+        {% if variant_formset.non_form_errors %}<p class="text-xs font-semibold text-blush-300">{{ variant_formset.non_form_errors }}</p>{% endif %}
+
+        <!-- Datos crudos para que product-colors.js arme todo -->
+        <script type="application/json" id="productFormData">{{ product_form_json|safe }}</script>
+
+        <!-- Contenedores de las filas REALES de los formsets (ocultos: la
+             UI linda de arriba los maneja, esto es lo que Django procesa) -->
+        <div class="hidden" data-variant-rows></div>
+        <div class="hidden" data-image-rows></div>
+        <!-- disabled: son plantillas para clonar por JS, no deben viajar
+             en el submit (un <div hidden> no alcanza — sus campos igual
+             se mandan; disabled sí los excluye del FormData). -->
+        <fieldset class="hidden" disabled data-variant-empty-form>{% include "dashboard/includes/variant_formset_row.html" with form=variant_formset.empty_form %}</fieldset>
+        <fieldset class="hidden" disabled data-image-empty-form>{% include "dashboard/includes/image_formset_row.html" with form=image_formset.empty_form %}</fieldset>
+
+        <div id="colorGroups" class="space-y-4"></div>
+
+        <p id="noVariantsHint" class="hidden text-sm text-white/40">Todavía no agregaste ningún color/talle: agregá al menos uno con stock para que se pueda comprar.</p>
+    </div>
+
+    <div class="flex items-center gap-3">
+        <button type="submit" class="btn-lift rounded-full bg-aurora px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-button)]">
+            {% if is_new %}Crear producto{% else %}Guardar cambios{% endif %}
+        </button>
+        <a href="{% url 'dashboard:product_list' %}" class="rounded-full px-6 py-3 text-sm font-bold text-white/50 transition hover:text-white">
+            Cancelar
+        </a>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static_v 'js/product-colors.js' %}" defer></script>
+{% endblock %}

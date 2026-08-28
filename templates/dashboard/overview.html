@@ -1,0 +1,117 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Resumen{% endblock %}
+{% block page_title %}Hola 👋{% endblock %}
+{% block page_subtitle %}<p class="text-sm text-white/40">Así está el catálogo hoy.</p>{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="dash-card p-6">
+        <p class="text-xs font-bold uppercase tracking-widest text-sky-300">Productos</p>
+        <p class="mt-2 text-3xl font-extrabold">{{ stats.products_count }}</p>
+        <p class="mt-1 text-xs text-white/40">{{ stats.active_products_count }} publicados</p>
+    </div>
+    <div class="dash-card p-6">
+        <p class="text-xs font-bold uppercase tracking-widest text-blush-300">Sin stock</p>
+        <p class="mt-2 text-3xl font-extrabold">{{ stats.out_of_stock_count }}</p>
+        <p class="mt-1 text-xs text-white/40">productos a reponer</p>
+    </div>
+    <div class="dash-card p-6">
+        <p class="text-xs font-bold uppercase tracking-widest text-lilac-300">Pedidos pendientes</p>
+        <p class="mt-2 text-3xl font-extrabold">{{ stats.pending_orders_count }}</p>
+        <p class="mt-1 text-xs text-white/40">esperando pago o confirmación</p>
+    </div>
+    <div class="dash-card p-6">
+        <p class="text-xs font-bold uppercase tracking-widest text-white/60">Subcategorías</p>
+        <p class="mt-2 text-3xl font-extrabold">{{ stats.subcategories_count }}</p>
+        <p class="mt-1 text-xs text-white/40">por prenda</p>
+    </div>
+</div>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-3">
+
+    <div class="dash-card p-6">
+        <div class="flex items-center justify-between">
+            <p class="font-bold">Últimos pedidos</p>
+            <a href="{% url 'dashboard:order_list' %}" class="text-xs font-bold text-lilac-300 hover:text-lilac-200">Ver todos →</a>
+        </div>
+        <div class="mt-4 space-y-3">
+            {% for order in recent_orders %}
+            <a href="{% url 'dashboard:order_detail' order.pk %}" class="flex items-center justify-between gap-3 rounded-2xl px-2 py-2 transition hover:bg-white/5">
+                <div class="min-w-0">
+                    <p class="truncate text-sm font-bold">#{{ order.id }} · {{ order.full_name }}</p>
+                    <p class="text-xs text-white/40">{{ order.created_at|date:"d/m H:i" }}</p>
+                </div>
+                <span class="shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold
+                    {% if order.status == 'paid' %}bg-sky-500/15 text-sky-300
+                    {% elif order.status == 'cancelled' %}bg-white/10 text-white/40
+                    {% else %}bg-blush-500/15 text-blush-300{% endif %}">
+                    {{ order.get_status_display }}
+                </span>
+            </a>
+            {% empty %}
+            <p class="py-6 text-center text-sm text-white/40">Todavía no hay pedidos.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="dash-card p-6">
+        <div class="flex items-center justify-between">
+            <p class="font-bold">Últimos productos cargados</p>
+            <a href="{% url 'dashboard:product_list' %}" class="text-xs font-bold text-lilac-300 hover:text-lilac-200">Ver todos →</a>
+        </div>
+        <div class="mt-4 space-y-3">
+            {% for product in recent_products %}
+            <a href="{% url 'dashboard:product_edit' product.pk %}" class="flex items-center gap-3 rounded-2xl px-2 py-2 transition hover:bg-white/5">
+                <div class="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white/10">
+                    {% if product.main_image %}<img src="{{ product.main_image.url }}" class="h-full w-full object-cover">{% endif %}
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-bold">{{ product.name }}</p>
+                    <p class="text-xs text-white/40">{{ product.category.parent.name }} / {{ product.category.name }}</p>
+                </div>
+                <p class="shrink-0 text-sm font-bold text-white/70">${{ product.price }}</p>
+            </a>
+            {% empty %}
+            <p class="py-6 text-center text-sm text-white/40">Todavía no cargaste productos.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="dash-card p-6">
+        <div class="flex items-center justify-between">
+            <p class="font-bold">Sin stock</p>
+            <a href="{% url 'dashboard:product_list' %}" class="text-xs font-bold text-lilac-300 hover:text-lilac-200">Ver productos →</a>
+        </div>
+        <div class="mt-4 space-y-3">
+            {% for product in out_of_stock_products %}
+            <a href="{% url 'dashboard:product_edit' product.pk %}" class="flex items-center gap-3 rounded-2xl px-2 py-2 transition hover:bg-white/5">
+                <div class="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white/10">
+                    {% if product.main_image %}<img src="{{ product.main_image.url }}" class="h-full w-full object-cover">{% endif %}
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-bold">{{ product.name }}</p>
+                    <p class="text-xs text-white/40">{{ product.category.parent.name }} / {{ product.category.name }}</p>
+                </div>
+                <span class="shrink-0 rounded-full bg-blush-500/15 px-2.5 py-1 text-[11px] font-bold text-blush-300">Sin stock</span>
+            </a>
+            {% empty %}
+            <p class="py-6 text-center text-sm text-white/40">Todo con stock disponible ✨</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<div class="mt-6 flex flex-wrap gap-3">
+    <a href="{% url 'dashboard:product_create' %}" class="btn-lift rounded-full bg-aurora px-5 py-3 text-sm font-bold text-white shadow-[var(--shadow-button)]">
+        + Cargar producto
+    </a>
+    <a href="{% url 'dashboard:category_create' %}" class="btn-lift rounded-full bg-white/10 px-5 py-3 text-sm font-bold text-white">
+        + Nueva categoría
+    </a>
+</div>
+
+{% endblock %}

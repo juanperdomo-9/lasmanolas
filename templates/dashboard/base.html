@@ -1,0 +1,131 @@
+{% load static cache_bust %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% block title %}Panel{% endblock %} · Las Manolas</title>
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧵</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static_v 'css/output.css' %}">
+    <link rel="stylesheet" href="{% static_v 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static_v 'css/dashboard.css' %}">
+</head>
+<body class="min-h-screen bg-ink font-sans text-white antialiased">
+
+{% with url_name=request.resolver_match.url_name %}
+<div class="flex min-h-screen">
+
+    <!-- ============================================= -->
+    <!-- SIDEBAR -->
+    <!-- ============================================= -->
+    <aside id="dashSidebar" class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-white/10 bg-black/20 backdrop-blur-xl transition-transform duration-300 lg:translate-x-0">
+
+        <div class="flex items-center gap-3 border-b border-white/10 px-6 py-6">
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-aurora text-lg font-black">LM</span>
+            <div>
+                <p class="text-sm font-extrabold leading-tight">Las Manolas</p>
+                <p class="text-xs font-medium text-white/40">Panel de gestión</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-1 px-4 py-6">
+            <a href="{% url 'dashboard:overview' %}"
+               class="dash-nav-link {% if url_name == 'overview' %}dash-nav-link--active{% endif %}">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+                Resumen
+            </a>
+            <a href="{% url 'dashboard:category_list' %}"
+               class="dash-nav-link {% if 'categor' in url_name %}dash-nav-link--active{% endif %}">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>
+                Categorías
+            </a>
+            <a href="{% url 'dashboard:product_list' %}"
+               class="dash-nav-link {% if 'product' in url_name %}dash-nav-link--active{% endif %}">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 7.3 12 3 3.5 7.3 12 11.5l8.5-4.2Z"/><path d="M3.5 7.3v9.4L12 21l8.5-4.3V7.3"/><path d="M12 11.5V21"/></svg>
+                Productos
+            </a>
+            <a href="{% url 'dashboard:order_list' %}"
+               class="dash-nav-link {% if 'order' in url_name %}dash-nav-link--active{% endif %}">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                Pedidos
+            </a>
+            <a href="{% url 'dashboard:attributes' %}"
+               class="dash-nav-link {% if url_name == 'attributes' or url_name == 'size_delete' or url_name == 'color_delete' %}dash-nav-link--active{% endif %}">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h6v6H4zM14 4h6v6h-6zM14 14h6v6h-6z"/><circle cx="7" cy="17" r="3"/></svg>
+                Talles y colores
+            </a>
+            <a href="{% url 'dashboard:site_config' %}"
+               class="dash-nav-link {% if url_name == 'site_config' %}dash-nav-link--active{% endif %}">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.3l.06.06A1.65 1.65 0 0 0 8.9 4.7a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+                Configuración
+            </a>
+        </nav>
+
+        <div class="border-t border-white/10 p-4">
+            <a href="{% url 'core:home' %}" target="_blank" rel="noopener" class="dash-nav-link">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+                Ver el sitio
+            </a>
+            <div class="mt-3 flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3">
+                <div class="min-w-0">
+                    <p class="truncate text-xs font-bold text-white">{{ request.user.get_full_name|default:request.user.username }}</p>
+                    <p class="text-[11px] text-white/40">Staff</p>
+                </div>
+                <form method="post" action="{% url 'dashboard:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="flex h-8 w-8 items-center justify-center rounded-full text-white/50 transition hover:bg-white/10 hover:text-white" title="Cerrar sesión">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </aside>
+
+    <div id="dashOverlay" class="fixed inset-0 z-30 hidden bg-black/50 lg:hidden"></div>
+
+    <!-- ============================================= -->
+    <!-- CONTENIDO -->
+    <!-- ============================================= -->
+    <div class="flex min-h-screen flex-1 flex-col lg:ml-72">
+
+        <header class="sticky top-0 z-20 flex items-center gap-4 border-b border-white/10 bg-ink/80 px-5 py-4 backdrop-blur-xl sm:px-8">
+            <button id="dashSidebarToggle" class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-white lg:hidden">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </button>
+            <div class="min-w-0 flex-1">
+                <h1 class="truncate text-xl font-extrabold sm:text-2xl">{% block page_title %}Panel{% endblock %}</h1>
+                {% block page_subtitle %}{% endblock %}
+            </div>
+            {% block page_actions %}{% endblock %}
+        </header>
+
+        <main class="flex-1 px-5 py-6 sm:px-8 sm:py-8">
+            {% if messages %}
+            <div class="mb-6 space-y-2">
+                {% for message in messages %}
+                <div class="rounded-2xl border px-4 py-3 text-sm font-semibold
+                    {% if message.tags == 'error' %}border-blush-500/30 bg-blush-500/10 text-blush-300
+                    {% else %}border-sky-500/30 bg-sky-500/10 text-sky-200{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block dashboard_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endwith %}
+
+<script src="{% static_v 'js/dashboard.js' %}" defer></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

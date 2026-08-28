@@ -1,0 +1,24 @@
+<div class="dash-formset-row flex flex-wrap items-end gap-3 rounded-2xl border border-white/10 p-4" data-formset-row>
+    {{ form.id }}
+    <div class="w-32">
+        <label class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-white/30">Talle</label>
+        {{ form.size }}
+    </div>
+    <div class="w-40">
+        <label class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-white/30">Color</label>
+        {{ form.color }}
+    </div>
+    <div class="w-28">
+        <label class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-white/30">SKU (opcional)</label>
+        {{ form.sku }}
+    </div>
+    <div class="w-24">
+        <label class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-white/30">Stock</label>
+        {{ form.stock }}
+    </div>
+    <div class="hidden">{{ form.DELETE }}</div>
+    <button type="button" data-formset-remove
+            class="ml-auto flex h-9 w-9 items-center justify-center rounded-full text-white/40 transition hover:bg-blush-500/15 hover:text-blush-300">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+    </button>
+</div>

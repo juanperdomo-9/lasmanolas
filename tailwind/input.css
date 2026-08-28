@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+@source "../templates";
+@source "../core";
+@source "../catalog";
+@source "../cart";
+@source "../orders";
+@source "../payments";
+@source "../static/css/tw-safelist.html";
+
+/*
+ * LAS MANOLAS — DESIGN TOKENS
+ * ============================
+ * Una sola familia tipográfica (Outfit) para todo el sitio, variando
+ * peso/tamaño para la jerarquía — mismo criterio que sitios "producto"
+ * modernos (ej. Geist en Vercel/Maxipiso): menos mezcla de fuentes,
+ * más sensación de sistema cuidado.
+ *
+ * La paleta pastel (celeste / violeta / rosa) vive acá como tokens con
+ * nombre porque se reusan mucho en gradientes, blobs y sombras tintadas.
+ */
+@theme {
+
+    --font-sans: "Outfit", "Segoe UI", system-ui, sans-serif;
+    --font-display: "Outfit", "Segoe UI", system-ui, sans-serif;
+
+    /* Base */
+    --color-cream: #FFFDFB;
+    --color-ink: #241F2E;
+    --color-ink-soft: #6E687C;
+    --color-surface: #FFFFFF;
+    --color-surface-soft: #FCF7FB;
+    --color-border: #F0E6F2;
+
+    /* Celeste */
+    --color-sky-50: #EFF9FD;
+    --color-sky-100: #D9EFF9;
+    --color-sky-300: #A9DDF0;
+    --color-sky-400: #8ED2E9;
+    --color-sky-500: #6FC1E3;
+    --color-sky-700: #3A93B8;
+
+    /* Violeta */
+    --color-lilac-50: #F5F0FC;
+    --color-lilac-100: #E7D9F7;
+    --color-lilac-300: #D2B8F0;
+    --color-lilac-400: #C09FE7;
+    --color-lilac-500: #A97FDE;
+    --color-lilac-700: #7C51B3;
+
+    /* Rosa */
+    --color-blush-50: #FDF1F6;
+    --color-blush-100: #FBDFEA;
+    --color-blush-300: #F6B9D3;
+    --color-blush-400: #F2A3C4;
+    --color-blush-500: #EF8DB6;
+    --color-blush-700: #C85A8B;
+
+    /* Menta */
+    --color-mint-100: #D8F0E6;
+    --color-mint-300: #A9DFC9;
+    --color-mint-700: #3E8F6B;
+
+    /* Mostaza */
+    --color-amber-100: #FBEBC9;
+    --color-amber-300: #F3D48A;
+    --color-amber-700: #B8862F;
+
+    /* Radios */
+    --radius-sm: 14px;
+    --radius-md: 24px;
+    --radius-lg: 36px;
+    --radius-xl: 48px;
+
+    /* Sombras tintadas (violeta suave en vez de negro puro = look "premium pastel") */
+    --shadow-card: 0 2px 10px rgba(150, 110, 180, .07), 0 20px 55px rgba(150, 110, 180, .10);
+    --shadow-cardHover: 0 16px 34px rgba(150, 110, 180, .14), 0 40px 90px rgba(150, 110, 180, .16);
+    --shadow-glow: 0 20px 60px rgba(199, 150, 220, .28);
+    --shadow-button: 0 10px 26px rgba(169, 127, 222, .30);
+
+    --ease-premium: cubic-bezier(.22, .61, .36, 1);
+
+}
+
+/*
+ * Container consistente con padding responsive (mismo criterio que
+ * usamos en proyectos anteriores para no depender del default de v4).
+ */
+@utility container {
+
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+
+    @media (width >= theme(--breakpoint-sm)) {
+        max-width: theme(--breakpoint-sm);
+        padding-inline: 2rem;
+    }
+
+    @media (width >= theme(--breakpoint-md)) {
+        max-width: theme(--breakpoint-md);
+    }
+
+    @media (width >= theme(--breakpoint-lg)) {
+        max-width: theme(--breakpoint-lg);
+        padding-inline: 2rem;
+    }
+
+    @media (width >= theme(--breakpoint-xl)) {
+        max-width: theme(--breakpoint-xl);
+        padding-inline: 2.5rem;
+    }
+
+    @media (width >= theme(--breakpoint-2xl)) {
+        max-width: theme(--breakpoint-2xl);
+        padding-inline: 3rem;
+    }
+
+}
+
+/* Utilidad para el texto en degradé pastel (títulos hero, acentos) */
+@utility text-gradient {
+    background: linear-gradient(115deg, var(--color-sky-700), var(--color-lilac-700) 45%, var(--color-blush-700));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* Botón "aurora" con el degradé de marca completo */
+@utility bg-aurora {
+    background: linear-gradient(120deg, var(--color-sky-500), var(--color-lilac-500) 50%, var(--color-blush-500));
+}
+
+/* Superficie de vidrio (navbar, drawers, chips flotantes) */
+@utility glass {
+    background: rgba(255, 255, 255, .72);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+}

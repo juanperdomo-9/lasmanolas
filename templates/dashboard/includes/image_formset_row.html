@@ -1,0 +1,31 @@
+<div class="dash-formset-row flex flex-col gap-3 rounded-2xl border border-white/10 p-4 sm:flex-row sm:items-center" data-formset-row>
+    {{ form.id }}
+    <div data-preview-wrap class="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-white/10">
+        <img data-preview-img
+             {% if form.instance.image %}src="{{ form.instance.image.url }}"{% endif %}
+             class="h-full w-full object-cover {% if not form.instance.image %}hidden{% endif %}">
+    </div>
+    <div class="grid flex-1 gap-3 sm:grid-cols-[1fr_1fr_1fr_80px]">
+        <div>
+            <label class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-white/30">Foto</label>
+            {{ form.image }}
+        </div>
+        <div>
+            <label class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-white/30">Color</label>
+            {{ form.color }}
+        </div>
+        <div>
+            <label class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-white/30">Texto alternativo</label>
+            {{ form.alt_text }}
+        </div>
+        <div>
+            <label class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-white/30">Orden</label>
+            {{ form.order }}
+        </div>
+    </div>
+    <div class="hidden">{{ form.DELETE }}</div>
+    <button type="button" data-formset-remove
+            class="flex h-9 w-9 shrink-0 items-center justify-center self-start rounded-full text-white/40 transition hover:bg-blush-500/15 hover:text-blush-300 sm:self-center">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+    </button>
+</div>

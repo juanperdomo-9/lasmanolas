@@ -1,0 +1,339 @@
+/* ==========================================
+   LAS MANOLAS — BASE + MOTION SYSTEM
+   Se carga DESPUÉS de output.css (utilidades Tailwind).
+
+   IMPORTANTE: todo va dentro de @layer base. Tailwind v4 compila sus
+   utilidades dentro de @layer utilities (ver output.css: "@layer theme,
+   base, components, utilities;"). Una regla SIN capa siempre le gana a
+   una regla CON capa, sin importar especificidad — así que un simple
+   "* { margin:0; padding:0 }" acá afuera pisaba TODAS las utilidades de
+   espaciado (padding, margin, gap) de Tailwind en todo el sitio (bug real
+   que dejó el home "achatado").
+   Metiendo esto en @layer base, las utilidades vuelven a ganar como
+   corresponde.
+========================================== */
+
+@layer base {
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        background: var(--color-cream);
+        color: var(--color-ink);
+        overflow-x: hidden;
+        font-family: var(--font-sans);
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    img {
+        display: block;
+        max-width: 100%;
+    }
+
+    button {
+        cursor: pointer;
+        font: inherit;
+    }
+
+    input,
+    textarea,
+    select {
+        font: inherit;
+        outline: none;
+    }
+
+    section {
+        position: relative;
+    }
+
+    /* Transiciones por defecto en elementos interactivos */
+    a,
+    button,
+    .transition-premium {
+        transition: all .35s var(--ease-premium);
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--color-lilac-300);
+        border-radius: 100px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--color-cream);
+    }
+
+    ::selection {
+        background: var(--color-lilac-500);
+        color: white;
+    }
+
+    /* ==========================================
+       REVEAL ON SCROLL
+       (ver static/js/animations.js — IntersectionObserver agrega .revealed)
+    ========================================== */
+
+    .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity .8s var(--ease-premium), transform .8s var(--ease-premium);
+    }
+
+    .reveal.revealed {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .reveal-scale {
+        opacity: 0;
+        transform: scale(.94);
+        transition: opacity .7s var(--ease-premium), transform .7s var(--ease-premium);
+    }
+
+    .reveal-scale.revealed {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* ==========================================
+       MARQUEE — cinta de beneficios infinita
+       El HTML repite el contenido 2 veces (.marquee-track) y esto anima
+       la mitad exacta hacia la izquierda -> loop perfecto sin salto.
+    ========================================== */
+
+    .marquee {
+        overflow: hidden;
+        -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+        mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+    }
+
+    .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marquee-scroll 34s linear infinite;
+    }
+
+    .marquee:hover .marquee-track {
+        animation-play-state: paused;
+    }
+
+    @keyframes marquee-scroll {
+        from {
+            transform: translateX(0);
+        }
+
+        to {
+            transform: translateX(-50%);
+        }
+    }
+
+    /* ==========================================
+       SPOTLIGHT — halo pastel que sigue el mouse
+       (ver .home.js: setea --mx / --my en mousemove)
+    ========================================== */
+
+    .spotlight {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity .5s var(--ease-premium);
+        background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%),
+                rgba(255, 255, 255, .55),
+                transparent 70%);
+    }
+
+    .group:hover .spotlight {
+        opacity: 1;
+    }
+
+    /* ==========================================
+       BLOBS — manchas de degradé pastel decorativas
+    ========================================== */
+
+    .blob {
+        position: absolute;
+        border-radius: 999px;
+        filter: blur(60px);
+        opacity: .55;
+        pointer-events: none;
+    }
+
+    .blob-float {
+        animation: blob-float 9s ease-in-out infinite;
+    }
+
+    @keyframes blob-float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-22px);
+        }
+    }
+
+    /* ==========================================
+       SCROLL CUE — flechita animada al pie del hero
+    ========================================== */
+
+    .scroll-cue {
+        animation: scroll-cue-bounce 2.2s ease-in-out infinite;
+    }
+
+    @keyframes scroll-cue-bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(6px);
+        }
+    }
+
+    /* ==========================================
+       NAVBAR — estado "scrolled" (lo togglea navbar.js)
+    ========================================== */
+
+    .navbar {
+        transition: transform .5s var(--ease-premium), background-color .4s ease, box-shadow .4s ease;
+    }
+
+    .navbar.navbar--hidden {
+        transform: translateY(-100%);
+    }
+
+    /* ==========================================
+       CART DRAWER
+    ========================================== */
+
+    .drawer-overlay {
+        transition: opacity .4s var(--ease-premium);
+    }
+
+    .drawer-panel {
+        transition: transform .5s var(--ease-premium);
+    }
+
+    /* ==========================================
+       BOTONES — leve "lift" en hover (ver animations.js)
+    ========================================== */
+
+    .btn-lift {
+        transition: transform .35s var(--ease-premium), box-shadow .35s var(--ease-premium);
+    }
+
+    /* ==========================================
+       SELECTOR DE TALLE / COLOR (ver variant-selector.js)
+    ========================================== */
+
+    .option-pill {
+        transition: transform .2s var(--ease-premium), background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
+    }
+
+    .option-pill:disabled,
+    .color-swatch:disabled {
+        opacity: .35;
+        cursor: not-allowed;
+        text-decoration: line-through;
+    }
+
+    /* Imagen principal de la galería: fade suave al cambiar de foto */
+    [data-gallery-main] {
+        transition: opacity .25s ease;
+    }
+
+    /* ==========================================
+       RADIOS DEL CHECKOUT (entrega / zona / pago)
+       El estado ":checked" se refleja con JS togglando .is-selected
+       (ver static/js/checkout.js) en vez de depender de `has-[:checked]`
+       de Tailwind — esa variante no estaba pintando nada acá.
+       Los estilos de ".is-selected" en sí viven en @layer state, más
+       abajo (ver el comentario ahí de por qué).
+    ========================================== */
+
+    .radio-card,
+    .radio-chip {
+        transition: border-color .2s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease;
+    }
+
+}
+
+/* ==========================================
+   @layer state — TODO lo que necesita ganarle a una utilidad de
+   Tailwind en el MISMO elemento (fondo/borde/color "seleccionado" sobre
+   un botón que también trae bg-surface/border-border de Tailwind).
+
+   Motivo: output.css declara "@layer theme, base, components, utilities;"
+   — el ORDEN de las capas define quién gana, no la especificidad (así
+   funcionan las CSS Cascade Layers: una capa declarada después le gana a
+   TODA regla de una capa declarada antes, sin importar cuántas clases
+   tenga la otra). Como este archivo entero va en "@layer base" (necesario
+   para no romper padding/margin/gap de Tailwind, ver el comment de arriba
+   de todo el archivo), cualquier ".algo.is-selected" de acá adentro
+   SIEMPRE perdía contra "bg-surface"/"bg-surface-soft" de Tailwind en el
+   mismo elemento — aunque ".is-selected" tuviera más especificidad.
+   Bug real, descubierto con los radios del checkout (el fondo lila
+   "seleccionado" no pintaba nada) pero afectaba también a los talles del
+   detalle de producto (el fill oscuro tampoco estaba pintando, solo el
+   texto/borde se notaba un poco).
+
+   "state" es un nombre de capa nuevo que Tailwind nunca declaró — al ser
+   la primera vez que el navegador lo ve (este archivo se carga DESPUÉS de
+   output.css), queda al final del orden global de capas, así que le gana
+   a "utilities" siempre. Cualquier ".is-selected" nuevo que tenga que
+   pisar una utilidad de Tailwind va ACÁ, no en @layer base de arriba.
+========================================== */
+
+@layer state {
+
+    .option-pill.is-selected {
+        border-color: var(--color-ink);
+        background: var(--color-ink);
+        color: #fff;
+        transform: scale(1.06);
+        box-shadow: 0 6px 16px rgba(36, 31, 46, .28);
+    }
+
+    .color-swatch.is-selected {
+        outline: 3px solid var(--color-ink);
+        outline-offset: 2px;
+        transform: scale(1.08);
+    }
+
+    [data-gallery-thumb].is-selected {
+        outline: 2px solid var(--color-lilac-500);
+        outline-offset: 2px;
+    }
+
+    .radio-card.is-selected {
+        border-color: var(--color-lilac-400);
+        background: var(--color-lilac-50);
+        box-shadow: 0 0 0 3px var(--color-lilac-100);
+    }
+
+    .radio-chip.is-selected {
+        border-color: var(--color-lilac-500);
+        background: var(--color-lilac-500);
+        color: #fff;
+    }
+
+}

@@ -1,0 +1,36 @@
+# Blueprint de Render — en el dashboard: "New +" → "Blueprint" → elegir
+# este repo, y Render arma el servicio solo leyendo esto.
+#
+# Variables marcadas "sync: false" hay que cargarlas a mano en el dashboard
+# de Render después de crear el servicio (son secretos/datos propios del
+# sitio, no van en el repo) — ver .env.example para el detalle de cada una.
+services:
+  - type: web
+    name: las-manolas
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com"
+      - key: SITE_URL
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: CLOUDINARY_URL
+        sync: false
+      - key: MP_ACCESS_TOKEN
+        sync: false
+      - key: MP_PUBLIC_KEY
+        sync: false
+      - key: WHATSAPP_NUMBER
+        sync: false

@@ -1,0 +1,17 @@
+.env
+venv/
+env/
+__pycache__/
+*.pyc
+db.sqlite3
+staticfiles/
+node_modules/
+
+# static/css/output.css SE COMMITEA A PROPÓSITO (no está acá arriba): el
+# build de Render no tiene Node/npm, así que no puede correr Tailwind CLI.
+# Antes de cada push con cambios de estilos, correr `npm run build` a mano
+# y commitear el output.css actualizado.
+media/
+!media/.gitkeep
+*.log
+.DS_Store

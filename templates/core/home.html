@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- ============================================= -->
+<!-- HERO — claro, consistente con el resto de la web.
+     TODO: cuando el cliente mande fotos, esta sección pasa a llevar la
+     foto real como background-image + overlay oscuro (el mismo patrón
+     de la referencia que mandó el cliente al principio). Por ahora, sin
+     foto, se mantiene clara para no quedar como un bloque oscuro suelto
+     encima de un sitio celeste. -->
+<!-- ============================================= -->
+<section class="relative flex min-h-[85vh] flex-col overflow-hidden bg-gradient-to-b from-sky-100 via-sky-50 to-sky-50">
+
+    <!-- textura sutil de puntitos, le da profundidad sin meter más color -->
+    <div class="absolute inset-0 opacity-40"
+         style="background-image: radial-gradient(var(--color-sky-500) 1px, transparent 1px); background-size: 26px 26px; -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, black 40%, transparent 80%); mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, black 40%, transparent 80%);">
+    </div>
+
+    <!-- centrado con margin en vez de -translate-x-1/2: la animación de
+         flotar ya usa "transform" para el translateY, y un transform de
+         Tailwind encima se pisaría con el del keyframe. -->
+    <div class="blob blob-float left-1/2 top-[-8%] ml-[-270px] h-[540px] w-[540px] bg-lilac-200 opacity-70"></div>
+    <div class="blob blob-float left-[12%] top-[30%] h-64 w-64 bg-blush-200 opacity-50" style="animation-delay:-4s"></div>
+    <div class="blob blob-float right-[10%] top-[10%] h-72 w-72 bg-sky-300 opacity-40" style="animation-delay:-2s"></div>
+
+    <!-- CONTENIDO -->
+    <div class="relative flex flex-1 items-center px-4">
+        <div class="mx-auto max-w-3xl py-16 text-center">
+            <span class="reveal inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-lilac-700 shadow-[var(--shadow-card)]">
+                Bebés · Niños · Adolescentes
+            </span>
+
+            <h1 class="reveal mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight text-ink sm:text-6xl lg:text-7xl" style="transition-delay:80ms">
+                Ropita con amor,
+                <span class="text-gradient block">en cada etapa.</span>
+            </h1>
+
+            <p class="reveal mx-auto mt-6 max-w-xl text-lg text-ink-soft" style="transition-delay:160ms">
+                Acompañamos el crecimiento de tu familia con prendas suaves y de calidad premium,
+                desde los primeros días de vida hasta la adolescencia.
+            </p>
+
+            <div class="reveal mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row" style="transition-delay:240ms">
+                <a href="#secciones" class="btn-lift w-full rounded-full bg-aurora px-8 py-4 text-center text-sm font-bold text-white shadow-[var(--shadow-button)] sm:w-auto">
+                    Ver catálogo
+                </a>
+                <a href="{{ site_config.whatsapp_link }}" target="_blank" rel="noopener"
+                   class="btn-lift flex w-full items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold text-ink shadow-[var(--shadow-card)] sm:w-auto">
+                    <svg class="h-4 w-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2z"/></svg>
+                    Hablar por WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- INDICADOR DE SCROLL — pegado abajo, el marquee cierra el hero justo después -->
+    <a href="#secciones" class="relative flex flex-col items-center gap-2 pb-6 text-ink-soft/70 transition hover:text-lilac-700">
+        <span class="text-[10px] font-bold uppercase tracking-widest">Descubrí más</span>
+        <span class="scroll-cue flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-[var(--shadow-card)]">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg>
+        </span>
+    </a>
+</section>
+
+<!-- ============================================= -->
+<!-- MARQUEE -->
+<!-- ============================================= -->
+<section class="marquee border-y border-lilac-100 py-2">
+    <div class="marquee-track">
+        {% for i in "12" %}
+        <div class="flex shrink-0 items-center gap-6 pr-6 text-[11px] font-semibold uppercase tracking-widest text-ink-soft">
+            <span>Envío a todo el país</span><span class="text-lilac-300">·</span>
+            <span>Algodón 100% premium</span><span class="text-blush-300">·</span>
+            <span>Pagá con MP, efectivo o transferencia</span><span class="text-sky-400">·</span>
+            <span>Ajuares para recién nacidos</span><span class="text-lilac-300">·</span>
+            <span>Talles hasta adolescentes</span><span class="text-blush-300">·</span>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- ============================================= -->
+<!-- GATEWAY: 3 SECCIONES -->
+<!-- ============================================= -->
+<section id="secciones" class="container py-20 sm:py-28">
+    <div class="reveal mx-auto max-w-xl text-center">
+        <p class="text-sm font-bold uppercase tracking-widest text-lilac-700">Nuestro catálogo</p>
+        <h2 class="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">Elegí la sección</h2>
+        <p class="mt-4 text-ink-soft">Cada etapa con su propia selección de prendas, organizada por tipo para encontrar todo rápido.</p>
+    </div>
+
+    <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-stagger>
+        {% for section in nav_sections %}
+        <a href="{{ section.get_absolute_url }}" data-spotlight
+           class="group relative flex min-h-[320px] flex-col justify-end overflow-hidden rounded-[32px] p-8 shadow-[var(--shadow-card)] transition-all duration-500 ease-[var(--ease-premium)] hover:-translate-y-2 hover:shadow-[var(--shadow-cardHover)]"
+           style="background-image: linear-gradient(135deg, color-mix(in srgb, {{ section.color }} 35%, white), color-mix(in srgb, {{ section.color }} 80%, white));">
+            <div class="spotlight"></div>
+            <span class="absolute right-6 top-6 flex h-11 w-11 items-center justify-center rounded-full bg-white/70 text-ink transition-transform duration-500 ease-[var(--ease-premium)] group-hover:rotate-45">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M7 7h10v10"/></svg>
+            </span>
+            <p class="relative text-xs font-bold uppercase tracking-widest text-ink/50">{{ section.subcategories.count }} categorías</p>
+            <h3 class="relative mt-2 text-3xl font-extrabold tracking-tight text-ink">{{ section.name }}</h3>
+            <p class="relative mt-2 text-sm font-medium text-ink/60">
+                {% for sub in section.subcategories.all|slice:":3" %}{{ sub.name }}{% if not forloop.last %} · {% endif %}{% endfor %}
+            </p>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- ============================================= -->
+<!-- STATS -->
+<!-- ============================================= -->
+<section class="relative overflow-hidden bg-ink py-16 text-white">
+    <div class="container relative grid grid-cols-2 gap-8 text-center lg:grid-cols-4">
+        <div class="reveal">
+            <p class="text-4xl font-extrabold sm:text-5xl"><span data-counter data-to="500" data-suffix="+">0</span></p>
+            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-white/50">Familias felices</p>
+        </div>
+        <div class="reveal" style="transition-delay:80ms">
+            <p class="text-4xl font-extrabold sm:text-5xl"><span data-counter data-to="1200" data-suffix="+">0</span></p>
+            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-white/50">Prendas entregadas</p>
+        </div>
+        <div class="reveal" style="transition-delay:160ms">
+            <p class="text-4xl font-extrabold sm:text-5xl">100%</p>
+            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-white/50">Algodón premium</p>
+        </div>
+        <div class="reveal" style="transition-delay:240ms">
+            <p class="text-4xl font-extrabold sm:text-5xl">24-48h</p>
+            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-white/50">Envío rápido</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================= -->
+<!-- DESTACADOS -->
+<!-- ============================================= -->
+<section class="container py-20 sm:py-28">
+    <div class="reveal flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+        <div>
+            <p class="text-sm font-bold uppercase tracking-widest text-blush-700">Lo más elegido</p>
+            <h2 class="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">Destacados</h2>
+        </div>
+    </div>
+
+    {% if featured_products %}
+    <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4" data-stagger>
+        {% for product in featured_products %}
+        {% include "catalog/includes/product_card.html" %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="reveal mt-12 flex flex-col items-center gap-4 rounded-[32px] border border-dashed border-lilac-300 bg-surface-soft py-16 text-center">
+        <p class="text-lg font-bold text-ink">Estamos cargando el catálogo ✨</p>
+        <p class="max-w-sm text-sm text-ink-soft">Muy pronto vas a ver acá nuestros productos destacados. Mientras tanto, escribinos y te ayudamos a elegir.</p>
+        <a href="{{ site_config.whatsapp_link }}" target="_blank" rel="noopener" class="btn-lift mt-1 rounded-full bg-aurora px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-button)]">
+            Hablar por WhatsApp
+        </a>
+    </div>
+    {% endif %}
+</section>
+
+<!-- ============================================= -->
+<!-- POR QUÉ ELEGIRNOS -->
+<!-- ============================================= -->
+<section class="bg-surface-soft py-20 sm:py-28">
+    <div class="container">
+        <div class="reveal mx-auto max-w-xl text-center">
+            <p class="text-sm font-bold uppercase tracking-widest text-sky-700">Por qué elegirnos</p>
+            <h2 class="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">Calidad que se nota</h2>
+        </div>
+
+        <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4" data-stagger>
+            {% for item in "1234" %}
+            <div class="rounded-[28px] bg-surface p-7 shadow-[var(--shadow-card)]">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-aurora text-white">
+                    {% if forloop.counter == 1 %}
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5 5 0 0 0-7.1 0L12 6.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 20.4l8.8-8.7a5 5 0 0 0 0-7.1Z"/></svg>
+                    {% elif forloop.counter == 2 %}
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+                    {% elif forloop.counter == 3 %}
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8h11l3 4v6h-3M5 8v10h3M5 8V5h9v3"/><circle cx="8" cy="18" r="2"/><circle cx="16" cy="18" r="2"/></svg>
+                    {% else %}
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+                    {% endif %}
+                </div>
+                <p class="mt-4 font-bold text-ink">
+                    {% if forloop.counter == 1 %}Hecho con amor
+                    {% elif forloop.counter == 2 %}Envíos rápidos
+                    {% elif forloop.counter == 3 %}Atención por WhatsApp
+                    {% else %}Pagá como prefieras{% endif %}
+                </p>
+                <p class="mt-2 text-sm text-ink-soft">
+                    {% if forloop.counter == 1 %}Seleccionamos telas suaves y seguras para la piel más delicada.
+                    {% elif forloop.counter == 2 %}Coordinamos entregas a todo el país en tiempo récord.
+                    {% elif forloop.counter == 3 %}Te acompañamos antes, durante y después de tu compra.
+                    {% else %}Mercado Pago, efectivo o transferencia — vos elegís.{% endif %}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ============================================= -->
+<!-- CTA FINAL -->
+<!-- ============================================= -->
+<section class="container py-20 sm:py-28">
+    <div class="reveal relative overflow-hidden rounded-[40px] bg-aurora px-8 py-16 text-center sm:px-16">
+        <div class="blob left-[-10%] top-[-30%] h-72 w-72 bg-white/40"></div>
+        <h2 class="relative text-3xl font-extrabold tracking-tight text-white sm:text-5xl">¿Buscás algo para tu bebé?</h2>
+        <p class="relative mx-auto mt-4 max-w-md text-white/90">Contanos qué necesitás y te ayudamos a elegir el talle y la prenda perfecta.</p>
+        <a href="{{ site_config.whatsapp_link }}" target="_blank" rel="noopener" class="btn-lift relative mt-8 inline-flex items-center gap-2 rounded-full bg-ink px-8 py-4 text-sm font-bold text-white shadow-xl">
+            Escribinos ahora
+        </a>
+    </div>
+</section>
+
+{% endblock %}

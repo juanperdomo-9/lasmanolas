@@ -1,0 +1,87 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Talles y colores{% endblock %}
+{% block page_title %}Talles y colores{% endblock %}
+{% block page_subtitle %}<p class="text-sm text-white/40">Se usan para armar las variantes de cada producto.</p>{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="grid gap-6 lg:grid-cols-2">
+
+    <!-- ============================================= -->
+    <!-- TALLES -->
+    <!-- ============================================= -->
+    <div class="dash-card p-7">
+        <p class="text-sm font-extrabold uppercase tracking-wider text-lilac-300">Talles</p>
+
+        <div class="mt-4 flex flex-wrap gap-2">
+            {% for size in sizes %}
+            <span class="group flex items-center gap-2 rounded-full bg-white/5 py-1.5 pl-4 pr-2 text-sm font-semibold">
+                {{ size.name }}
+                <form method="post" action="{% url 'dashboard:size_delete' size.pk %}" onsubmit="return confirm('¿Borrar el talle {{ size.name }}?');">
+                    {% csrf_token %}
+                    <button type="submit" class="flex h-5 w-5 items-center justify-center rounded-full text-white/30 transition hover:bg-blush-500/20 hover:text-blush-300">×</button>
+                </form>
+            </span>
+            {% empty %}
+            <p class="text-sm text-white/40">Todavía no hay talles cargados.</p>
+            {% endfor %}
+        </div>
+
+        <form method="post" class="mt-6 flex items-end gap-3 border-t border-white/10 pt-5">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="size">
+            <div class="flex-1">
+                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Nuevo talle</label>
+                {{ size_form.name }}
+            </div>
+            <div class="w-24">
+                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Orden</label>
+                {{ size_form.order }}
+            </div>
+            <button type="submit" class="btn-lift rounded-full bg-white/10 px-5 py-3 text-sm font-bold text-white hover:bg-white/15">+ Agregar</button>
+        </form>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- COLORES -->
+    <!-- ============================================= -->
+    <div class="dash-card p-7">
+        <p class="text-sm font-extrabold uppercase tracking-wider text-lilac-300">Colores</p>
+
+        <div class="mt-4 flex flex-wrap gap-2">
+            {% for color in colors %}
+            <span class="group flex items-center gap-2 rounded-full bg-white/5 py-1.5 pl-2 pr-2 text-sm font-semibold">
+                {% if color.hex_code %}
+                <span class="h-5 w-5 rounded-full border border-white/20" style="background:{{ color.hex_code }}"></span>
+                {% endif %}
+                {{ color.name }}
+                <form method="post" action="{% url 'dashboard:color_delete' color.pk %}" onsubmit="return confirm('¿Borrar el color {{ color.name }}?');">
+                    {% csrf_token %}
+                    <button type="submit" class="flex h-5 w-5 items-center justify-center rounded-full text-white/30 transition hover:bg-blush-500/20 hover:text-blush-300">×</button>
+                </form>
+            </span>
+            {% empty %}
+            <p class="text-sm text-white/40">Todavía no hay colores cargados.</p>
+            {% endfor %}
+        </div>
+
+        <form method="post" class="mt-6 flex items-end gap-3 border-t border-white/10 pt-5">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="color">
+            <div class="flex-1">
+                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Nombre del color</label>
+                {{ color_form.name }}
+            </div>
+            <div>
+                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/50">Elegir</label>
+                {{ color_form.hex_code }}
+            </div>
+            <button type="submit" class="btn-lift rounded-full bg-white/10 px-5 py-3 text-sm font-bold text-white hover:bg-white/15">+ Agregar</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}
