@@ -26,7 +26,7 @@ def _order_summary_lines(order):
     if order.delivery_method == Order.DeliveryMethod.SHIPPING:
         lines.append(f'Entrega: Envío — {order.get_delivery_zone_display()} (costo a coordinar)')
     else:
-        lines.append(f'Entrega: Mensajería (Andreani) — ${order.shipping_cost}')
+        lines.append(f'Entrega: Andreani — ${order.shipping_cost}')
 
     if order.address:
         address = order.address

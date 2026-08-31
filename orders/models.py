@@ -25,7 +25,7 @@ class Order(models.Model):
 
     class DeliveryMethod(models.TextChoices):
         SHIPPING = 'shipping', 'Envío (La Plata / Magdalena y alrededores)'
-        COURIER = 'courier', 'Mensajería (Andreani)'
+        COURIER = 'courier', 'Andreani'
 
     class DeliveryZone(models.TextChoices):
         LA_PLATA = 'la_plata', 'La Plata'
