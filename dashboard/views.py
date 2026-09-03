@@ -1,7 +1,7 @@
 import json
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -42,6 +42,18 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '')
+
+        # El teclado de varios celulares auto-capitaliza la primera letra
+        # de un campo de texto ("admin" -> "Admin") — Django autentica por
+        # username exacto (sensible a mayúsculas), así que eso rompía el
+        # login sin ningún error visible que lo explique. Se resuelve el
+        # username real (case-insensitive) antes de autenticar.
+        User = get_user_model()
+        try:
+            username = User.objects.get(username__iexact=username).username
+        except User.DoesNotExist:
+            pass
+
         user = authenticate(request, username=username, password=password)
         if user is not None and user.is_staff:
             login(request, user)
