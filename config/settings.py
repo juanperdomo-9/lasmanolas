@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'config.frame_embed.AllowFrameEmbedMiddleware',
     # Sirve los estáticos directo desde Django/Gunicorn en producción (Render
     # no tiene un servidor de estáticos aparte como Nginx) — va inmediatamente
     # después de SecurityMiddleware, así lo pide WhiteNoise.
