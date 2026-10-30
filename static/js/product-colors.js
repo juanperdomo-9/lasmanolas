@@ -326,7 +326,12 @@ function initProductColors(data) {
         stockInput.value = v.stock;
         stockInput.title = "Stock";
         stockInput.className = "w-16 rounded-full border border-white/10 bg-white/10 px-2 py-1 text-center text-xs text-white";
-        stockInput.addEventListener("input", () => setRowField(v.row, "stock", stockInput.value || 0));
+        stockInput.addEventListener("input", () => {
+            // También al estado del grupo: si no, cualquier render() posterior
+            // (sumar talle, foto o color) redibujaba el chip con el stock viejo.
+            v.stock = stockInput.value || 0;
+            setRowField(v.row, "stock", v.stock);
+        });
         chip.appendChild(stockInput);
 
         const removeBtn = document.createElement("button");

@@ -1,0 +1,67 @@
+{% extends "dashboard/base.html" %}
+{% load static cache_bust %}
+
+{% block title %}Stock{% endblock %}
+{% block page_title %}Stock{% endblock %}
+{% block page_subtitle %}<p class="text-sm text-white/40">Tocá − o + (o escribí el número). Se guarda solo.</p>{% endblock %}
+
+{% block dashboard_content %}
+
+<form method="get" class="mb-6">
+    <input type="search" name="q" value="{{ q }}" placeholder="Buscar producto…"
+           class="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 text-base text-white placeholder:text-white/30 focus:border-lilac-400 focus:outline-none sm:max-w-md">
+</form>
+
+{% csrf_token %}
+
+<div class="space-y-4">
+    {% for product in products %}
+    <div class="dash-card p-5 sm:p-6">
+        <div class="mb-4 flex items-center justify-between gap-3">
+            <p class="text-lg font-extrabold leading-tight">{{ product.name }}</p>
+            <a href="{% url 'dashboard:product_edit' product.pk %}" class="shrink-0 rounded-full bg-white/5 px-4 py-2 text-xs font-bold text-white/60 hover:bg-white/10">Editar</a>
+        </div>
+
+        {% if product.variants.all %}
+        <div class="divide-y divide-white/5">
+            {% for v in product.variants.all %}
+            <div class="flex items-center gap-3 py-3" data-stock-row data-url="{% url 'dashboard:stock_update' v.pk %}">
+                <div class="flex min-w-0 flex-1 items-center gap-2.5">
+                    {% if v.color %}
+                    <span class="h-5 w-5 shrink-0 rounded-full border border-white/20" style="background:{{ v.color.hex_code|default:'#ccc' }}"></span>
+                    {% endif %}
+                    <div class="min-w-0">
+                        <p class="truncate text-sm font-bold">Talle {{ v.size.name }}</p>
+                        {% if v.color %}<p class="truncate text-xs text-white/40">{{ v.color.name }}</p>{% endif %}
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center gap-2">
+                    <button type="button" data-step="-1" aria-label="Restar uno"
+                            class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-xl font-bold hover:bg-white/15">−</button>
+                    <input type="number" min="0" inputmode="numeric" value="{{ v.stock }}" data-stock-input
+                           class="h-11 w-16 rounded-xl border border-white/10 bg-white/5 text-center text-lg font-extrabold text-white [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
+                    <button type="button" data-step="1" aria-label="Sumar uno"
+                            class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-xl font-bold hover:bg-white/15">+</button>
+                </div>
+
+                <span data-stock-status class="w-5 shrink-0 text-center text-base font-extrabold"></span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-sm text-white/40">Este producto todavía no tiene talles cargados — agregalos desde <a href="{% url 'dashboard:product_edit' product.pk %}" class="font-bold text-lilac-300 underline">Editar</a>.</p>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div class="dash-card px-5 py-14 text-center text-white/40">
+        {% if q %}No hay productos que coincidan con "{{ q }}".{% else %}Todavía no hay productos cargados.{% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static_v 'js/stock.js' %}"></script>
+{% endblock %}

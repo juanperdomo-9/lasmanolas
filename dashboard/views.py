@@ -11,7 +11,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from catalog.models import Category, Color, Product, Size
+from catalog.models import Category, Color, Product, ProductVariant, Size
 from core.models import SiteConfig
 from orders.models import Order
 from orders.stock import sync_stock_for_status
@@ -427,6 +427,43 @@ def site_config_edit(request):
     else:
         form = SiteConfigForm(instance=config)
     return render(request, 'dashboard/site_config_form.html', {'form': form})
+
+
+# ==========================================
+# STOCK — pantalla simple para cargar stock sin entrar a editar cada
+# producto: todos los talles/colores en una lista, con − / + que guardan
+# solos (ver static/js/stock.js).
+# ==========================================
+
+@staff_required
+def stock(request):
+    q = request.GET.get('q', '').strip()
+    products = Product.objects.select_related('category').prefetch_related(
+        Prefetch('variants', queryset=ProductVariant.objects.select_related('size', 'color')
+                 .order_by('color__name', 'size__order', 'size__name')),
+    ).order_by('name')
+    if q:
+        products = products.filter(name__icontains=q)
+
+    return render(request, 'dashboard/stock.html', {'products': products, 'q': q})
+
+
+@staff_required
+def stock_update(request, pk):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+    variant = get_object_or_404(ProductVariant, pk=pk)
+    try:
+        value = int(request.POST.get('stock', ''))
+    except ValueError:
+        return JsonResponse({'error': 'Poné un número'}, status=400)
+    if value < 0:
+        return JsonResponse({'error': 'El stock no puede ser negativo'}, status=400)
+
+    variant.stock = value
+    variant.save(update_fields=['stock'])
+    return JsonResponse({'stock': variant.stock})
 
 
 # ==========================================

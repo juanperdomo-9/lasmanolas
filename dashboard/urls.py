@@ -19,6 +19,9 @@ urlpatterns = [
     path('productos/<int:pk>/editar/', views.product_edit, name='product_edit'),
     path('productos/<int:pk>/eliminar/', views.product_delete, name='product_delete'),
 
+    path('stock/', views.stock, name='stock'),
+    path('stock/<int:pk>/', views.stock_update, name='stock_update'),
+
     path('talles-y-colores/', views.attributes, name='attributes'),
     path('talles-y-colores/talle/<int:pk>/eliminar/', views.size_delete, name='size_delete'),
     path('talles-y-colores/color/<int:pk>/eliminar/', views.color_delete, name='color_delete'),
