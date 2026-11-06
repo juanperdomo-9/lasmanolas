@@ -49,85 +49,88 @@
 </section>
 
 <!-- ============================================= -->
-<!-- MARQUEE -->
+<!-- MARQUEE — frases grandes de colores; el scroll la acelera, le cambia
+     el sentido y la estira (home.js) -->
 <!-- ============================================= -->
-<section class="marquee border-y border-lilac-100 py-2" data-velocity-marquee>
+<section class="lm-marquee marquee" data-velocity-marquee aria-label="Beneficios">
     <div class="marquee-track">
         {% for i in "12" %}
-        <div class="flex shrink-0 items-center gap-6 pr-6 text-[11px] font-semibold uppercase tracking-widest text-ink-soft">
-            <span>Envío a todo el país</span><span class="text-lilac-300">·</span>
-            <span>Algodón 100% premium</span><span class="text-blush-300">·</span>
-            <span>Pagá con MP, efectivo o transferencia</span><span class="text-sky-400">·</span>
-            <span>Ajuares para recién nacidos</span><span class="text-lilac-300">·</span>
-            <span>Talles hasta adolescentes</span><span class="text-blush-300">·</span>
+        <div class="lm-mq-group" {% if forloop.last %}aria-hidden="true"{% endif %}>
+            <span class="lm-mq lm-mq--lilac">Envío a todo el país</span><span class="lm-mq-dot"></span>
+            <span class="lm-mq lm-mq--blush">Ajuares para recién nacidos</span><span class="lm-mq-dot"></span>
+            <span class="lm-mq lm-mq--sky">De RN a XL</span><span class="lm-mq-dot"></span>
+            <span class="lm-mq lm-mq--mint">Te atendemos por WhatsApp</span><span class="lm-mq-dot"></span>
+            <span class="lm-mq lm-mq--amber">Efectivo o transferencia{% if mp_available %} o Mercado Pago{% endif %}</span><span class="lm-mq-dot"></span>
         </div>
         {% endfor %}
     </div>
 </section>
 
 <!-- ============================================= -->
-<!-- GATEWAY: 3 SECCIONES -->
+<!-- SECCIONES — cada una con su color plano y fotos reales de sus prendas
+     pegadas como fotitos, que se abren en abanico al pasar el mouse -->
 <!-- ============================================= -->
-<section id="secciones" class="container py-20 sm:py-28">
-    <div class="mx-auto max-w-xl text-center">
-        <p class="text-sm font-bold uppercase tracking-widest text-lilac-700" data-anim="left">Nuestro catálogo</p>
-        <h2 class="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl" data-split>Elegí la sección</h2>
-        <p class="mt-4 text-ink-soft" data-anim="up" style="--i:2">Cada etapa con su propia selección de prendas, organizada por tipo para encontrar todo rápido.</p>
+<section id="secciones" class="container py-24 sm:py-32">
+    <div class="grid gap-6 lg:grid-cols-12 lg:items-end">
+        <h2 class="lm-h2 lg:col-span-6" data-split>¿Para quién es?</h2>
+        <p class="lm-body lg:col-span-5 lg:col-start-8" data-anim="up" style="--i:2">Cada etapa con su propia selección, ordenada por prenda para que encuentres todo rápido.</p>
     </div>
 
-    <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {% for section in nav_sections %}
+    <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3">
+        {% for item in home_sections %}
         <div data-anim="{% cycle 'tilt-left' 'pop' 'tilt-right' %}" style="--i:{{ forloop.counter0 }}">
-        <a href="{{ section.get_absolute_url }}" data-spotlight
-           class="group relative flex h-full min-h-[320px] flex-col justify-end overflow-hidden rounded-[32px] p-8 shadow-[var(--shadow-card)] transition-all duration-500 ease-[var(--ease-premium)] hover:-translate-y-2 hover:shadow-[var(--shadow-cardHover)]"
-           style="background-image: linear-gradient(135deg, color-mix(in srgb, {{ section.color }} 35%, white), color-mix(in srgb, {{ section.color }} 80%, white));">
-            <div class="spotlight"></div>
-            <span class="absolute right-6 top-6 flex h-11 w-11 items-center justify-center rounded-full bg-white/70 text-ink transition-transform duration-500 ease-[var(--ease-premium)] group-hover:rotate-45">
-                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M7 7h10v10"/></svg>
-            </span>
-            <p class="relative text-xs font-bold uppercase tracking-widest text-ink/50">{{ section.subcategories.count }} categorías</p>
-            <h3 class="relative mt-2 text-3xl font-extrabold tracking-tight text-ink">{{ section.name }}</h3>
-            <p class="relative mt-2 text-sm font-medium text-ink/60">
-                {% for sub in section.subcategories.all|slice:":3" %}{{ sub.name }}{% if not forloop.last %} · {% endif %}{% endfor %}
-            </p>
-        </a>
+            <a href="{{ item.section.get_absolute_url }}" class="lm-sec group" style="--sec: {{ item.section.color }}">
+                <span class="lm-sec-arrow" aria-hidden="true">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M7 7h10v10"/></svg>
+                </span>
+                {% if item.photos %}
+                <span class="lm-sec-photos" aria-hidden="true">
+                    {% for url in item.photos %}
+                    <span class="lm-sticker lm-sticker--{{ forloop.counter }}"><img src="{{ url }}" alt="" width="400" height="500" loading="lazy" decoding="async"></span>
+                    {% endfor %}
+                </span>
+                {% endif %}
+                <span class="lm-sec-body">
+                    <span class="lm-sec-name">{{ item.section.name }}</span>
+                    <span class="lm-sec-count">{{ item.count }} prenda{{ item.count|pluralize }}</span>
+                    {% if item.subcategories %}
+                    <span class="lm-sec-tags">{% for sub in item.subcategories %}<span>{{ sub }}</span>{% endfor %}</span>
+                    {% endif %}
+                </span>
+            </a>
         </div>
         {% endfor %}
     </div>
 </section>
 
 <!-- ============================================= -->
-<!-- STATS -->
+<!-- CINTA MÉTRICA — los talles reales en una cinta que se desliza con el
+     scroll (home.js). Datos verdaderos: talles y prendas del catálogo. -->
 <!-- ============================================= -->
-<section class="relative overflow-hidden bg-ink py-16 text-white" data-anim="wipe">
-    <div class="container relative grid grid-cols-2 gap-8 text-center lg:grid-cols-4">
-        <div data-anim="up" style="--i:3">
-            <p class="text-4xl font-extrabold sm:text-5xl"><span data-counter data-to="500" data-suffix="+">0</span></p>
-            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-white/50">Familias felices</p>
-        </div>
-        <div data-anim="up" style="--i:4">
-            <p class="text-4xl font-extrabold sm:text-5xl"><span data-counter data-to="1200" data-suffix="+">0</span></p>
-            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-white/50">Prendas entregadas</p>
-        </div>
-        <div data-anim="up" style="--i:5">
-            <p class="text-4xl font-extrabold sm:text-5xl">100%</p>
-            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-white/50">Algodón premium</p>
-        </div>
-        <div data-anim="up" style="--i:6">
-            <p class="text-4xl font-extrabold sm:text-5xl">24-48h</p>
-            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-white/50">Envío rápido</p>
+<section class="lm-ruler-band" data-anim="wipe">
+    <div class="container grid gap-6 pb-12 pt-20 lg:grid-cols-12 lg:items-end lg:pb-16 lg:pt-28">
+        <h2 class="lm-h2 lm-on-ink lg:col-span-7" data-split>{{ size_count }} talles, uno para cada etapa.</h2>
+        <p class="lm-body lm-on-ink-soft lg:col-span-5" data-anim="up" style="--i:3">De recién nacido a adolescente, con {{ product_count }} prenda{{ product_count|pluralize }} en el catálogo y el stock real de cada talle.</p>
+    </div>
+    <div class="lm-tape" data-tape aria-hidden="true">
+        <div class="lm-tape-track">
+            {% for i in "123" %}
+            <div class="lm-tape-group">
+                {% for name in sizes %}<span class="lm-tape-mark"><span class="lm-tape-label">{{ name }}</span></span>{% endfor %}
+            </div>
+            {% endfor %}
         </div>
     </div>
+    <div class="h-16 lg:h-24"></div>
 </section>
 
 <!-- ============================================= -->
 <!-- DESTACADOS -->
 <!-- ============================================= -->
-<section class="container py-20 sm:py-28">
-    <div class="flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+<section class="container py-24 sm:py-32">
+    <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-            <p class="text-sm font-bold uppercase tracking-widest text-blush-700" data-anim="left">Lo más elegido</p>
-            <h2 class="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl" data-split>Destacados</h2>
+            <h2 class="lm-h2" data-split>Destacados</h2>
         </div>
     </div>
 
@@ -235,16 +238,28 @@
 </section>
 
 <!-- ============================================= -->
-<!-- CTA FINAL -->
+<!-- CIERRE — la duda real (el talle) y WhatsApp; fotos que entran volando
+     desde los costados y siguen al mouse (home.js) -->
 <!-- ============================================= -->
-<section class="container py-20 sm:py-28">
-    <div class="relative overflow-hidden rounded-[40px] bg-aurora px-8 py-16 text-center sm:px-16" data-scroll-grow>
-        <div class="blob left-[-10%] top-[-30%] h-72 w-72 bg-white/40"></div>
-        <h2 class="relative text-3xl font-extrabold tracking-tight text-white sm:text-5xl" data-split>¿Buscás algo para tu bebé?</h2>
-        <p class="relative mx-auto mt-4 max-w-md text-white/90" data-anim="up" style="--i:3">Contanos qué necesitás y te ayudamos a elegir el talle y la prenda perfecta.</p>
-        <a href="{{ site_config.whatsapp_link }}" target="_blank" rel="noopener" data-anim="pop" style="--i:5" class="btn-lift relative mt-8 inline-flex items-center gap-2 rounded-full bg-ink px-8 py-4 text-sm font-bold text-white shadow-xl">
-            Escribinos ahora
-        </a>
+<section class="lm-cta-wrap" data-mouse-scene>
+    <div class="container py-24 sm:py-32">
+        <div class="lm-cta" data-scroll-grow>
+            {% for url in cta_photos %}
+            <div class="lm-cta-photo lm-cta-photo--{{ forloop.counter }}" data-anim="{% cycle 'tilt-left' 'tilt-right' 'tilt-left' 'tilt-right' %}" style="--i:{{ forloop.counter0 }}" aria-hidden="true">
+                <span class="lm-cta-photo-in" data-depth="{% cycle '18' '-14' '-22' '12' %}"><img src="{{ url }}" alt="" width="400" height="500" loading="lazy" decoding="async"></span>
+            </div>
+            {% endfor %}
+            <div class="lm-cta-text">
+                <h2 class="lm-h2" data-split>¿No sabés qué talle elegir?</h2>
+                <p class="lm-body mx-auto mt-5 max-w-[34ch]" data-anim="up" style="--i:3">Contanos la edad y cómo le quedan las prendas que ya tiene. Te ayudamos a elegir por WhatsApp.</p>
+                <div class="mt-8" data-anim="pop" style="--i:5">
+                    <a href="{{ site_config.whatsapp_link }}?text={{ "Hola! Quiero ayuda para elegir un talle."|urlencode }}" target="_blank" rel="noopener" class="lm-btn lm-btn--wiggle">
+                        <svg class="h-5 w-5 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2z"/></svg>
+                        Escribinos por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 

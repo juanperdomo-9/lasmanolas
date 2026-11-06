@@ -439,6 +439,262 @@
 
 @keyframes lm-fade { from { opacity: 0; } to { opacity: 1; } }
 
+/* ---------- Cinta de beneficios: frases grandes de colores ---------- */
+
+.lm-marquee {
+    padding: clamp(1rem, 2.5vw, 1.75rem) 0;
+    background: var(--color-surface);
+}
+
+.lm-mq-group {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: clamp(1.25rem, 2.5vw, 2.5rem);
+    padding-right: clamp(1.25rem, 2.5vw, 2.5rem);
+}
+
+.lm-mq {
+    font-size: clamp(1.75rem, 1rem + 2.6vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.lm-mq--lilac { color: var(--color-lilac-700); }
+.lm-mq--blush { color: var(--color-blush-700); }
+.lm-mq--sky { color: var(--color-sky-700); }
+.lm-mq--mint { color: var(--color-mint-700); }
+.lm-mq--amber { color: var(--color-amber-700); }
+
+.lm-mq-dot {
+    flex-shrink: 0;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--color-ink);
+}
+
+/* ---------- Secciones: color plano + fotitos pegadas ---------- */
+
+.lm-sec {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+    min-height: clamp(360px, 34vw, 460px);
+    padding: clamp(1.5rem, 2.5vw, 2rem);
+    overflow: hidden;
+    border-radius: 32px;
+    background: color-mix(in srgb, var(--sec, var(--color-lilac-500)) 26%, white);
+    color: var(--color-ink);
+    transition: translate 400ms var(--lm-spring), background-color 300ms ease;
+}
+
+.lm-sec-arrow {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: #fff;
+    transition: rotate 400ms var(--lm-spring);
+}
+
+.lm-sec-photos {
+    position: absolute;
+    top: 9%;
+    left: 50%;
+    width: 0;
+    height: 0;
+}
+
+.lm-sticker {
+    position: absolute;
+    top: 0;
+    width: clamp(110px, 12vw, 160px);
+    padding: 6px 6px 22px;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 16px 28px -14px rgba(36, 31, 46, 0.4);
+    transition: translate 500ms var(--lm-spring), rotate 500ms var(--lm-spring), scale 500ms var(--lm-spring);
+}
+
+.lm-sticker img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 3px;
+}
+
+.lm-sticker--1 { translate: -82% 0; rotate: -8deg; }
+.lm-sticker--2 { translate: -14% 10%; rotate: 7deg; }
+
+.lm-sec-body {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.lm-sec-name {
+    font-size: clamp(2rem, 1.4rem + 1.6vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+
+.lm-sec-count { font-size: 1rem; font-weight: 600; }
+
+.lm-sec-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+}
+
+.lm-sec-tags span {
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.7);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .lm-sec:hover { translate: 0 -8px; }
+    .lm-sec:hover .lm-sec-arrow { rotate: 45deg; }
+    .lm-sec:hover .lm-sticker--1 { translate: -100% -6%; rotate: -16deg; scale: 1.06; }
+    .lm-sec:hover .lm-sticker--2 { translate: 4% 2%; rotate: 14deg; scale: 1.06; }
+}
+
+/* ---------- Cinta métrica (talles reales) ---------- */
+
+.lm-ruler-band {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-ink);
+}
+
+.lm-on-ink { color: #fff; }
+.lm-on-ink-soft { color: rgba(255, 255, 255, 0.82); }
+
+.lm-tape {
+    width: 112vw;
+    margin-left: -6vw;
+    rotate: -2.5deg;
+    background-color: var(--color-amber-300);
+    /* rayitas de la cinta: cada 15px una corta, cada 75px una larga */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='96'%3E%3Cg fill='%23241F2E'%3E%3Crect x='0' width='2' height='34'/%3E%3Crect x='15' width='1.5' height='14'/%3E%3Crect x='30' width='1.5' height='14'/%3E%3Crect x='45' width='1.5' height='14'/%3E%3Crect x='60' width='1.5' height='14'/%3E%3Crect x='75' width='1.5' height='24'/%3E%3Crect x='90' width='1.5' height='14'/%3E%3Crect x='105' width='1.5' height='14'/%3E%3Crect x='120' width='1.5' height='14'/%3E%3Crect x='135' width='1.5' height='14'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    overflow: hidden;
+}
+
+.lm-tape-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+}
+
+.lm-tape-group { display: flex; }
+
+.lm-tape-mark {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    width: 150px;
+    height: clamp(84px, 9vw, 104px);
+    padding: 0 0 0.75rem 0.6rem;
+}
+
+.lm-tape-label {
+    font-size: clamp(1.25rem, 0.9rem + 1vw, 1.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+}
+
+/* ---------- Cierre: ¿no sabés qué talle elegir? ---------- */
+
+.lm-cta-wrap { overflow: hidden; }
+
+.lm-cta {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: clamp(460px, 48vw, 600px);
+    padding: 10rem 1.25rem 3rem; /* en el celu las fotos van arriba del texto */
+    border-radius: 40px;
+    background: var(--color-blush-100);
+    text-align: center;
+}
+
+.lm-cta-text { position: relative; z-index: 2; }
+
+@media (min-width: 768px) {
+    .lm-cta { padding: 4rem 3rem; }
+}
+
+.lm-cta-photo {
+    position: absolute;
+    z-index: 1;
+    width: clamp(84px, 13vw, 200px);
+}
+
+.lm-cta-photo-in {
+    display: block;
+    padding: 6% 6% 20%;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 18px 30px -14px rgba(36, 31, 46, 0.4);
+    will-change: transform;
+}
+
+.lm-cta-photo-in img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 3px;
+}
+
+.lm-cta-photo--1 { top: 6%; left: 4%; }
+.lm-cta-photo--1 .lm-cta-photo-in { rotate: -9deg; }
+.lm-cta-photo--2 { top: 4%; right: 5%; }
+.lm-cta-photo--2 .lm-cta-photo-in { rotate: 8deg; }
+.lm-cta-photo--3 { bottom: 6%; left: 9%; }
+.lm-cta-photo--3 .lm-cta-photo-in { rotate: 6deg; }
+.lm-cta-photo--4 { bottom: 5%; right: 8%; }
+.lm-cta-photo--4 .lm-cta-photo-in { rotate: -7deg; }
+
+@media (max-width: 767px) {
+    .lm-cta-photo--3,
+    .lm-cta-photo--4 { display: none; }
+    .lm-cta-photo { width: 76px; }
+    .lm-cta-photo--1 { top: 1.5rem; left: 14%; }
+    .lm-cta-photo--2 { top: 1.25rem; right: 14%; }
+}
+
+/* El botón de WhatsApp se sacude cada tanto, para llamar la atención */
+.lm-btn--wiggle { animation: lm-wiggle 4.5s ease-in-out 2s infinite; }
+
+@keyframes lm-wiggle {
+    0%, 84%, 100% { rotate: 0deg; }
+    86% { rotate: -5deg; }
+    88% { rotate: 5deg; }
+    90% { rotate: -4deg; }
+    92% { rotate: 3deg; }
+    94% { rotate: -1deg; }
+}
+
 /* ==========================================
    APARICIONES AL SCROLLEAR (resto del home)
    [data-anim="..."] entra cuando aparece en pantalla (home.js le pone
@@ -495,6 +751,9 @@
 
 @keyframes lm-word-up { from { translate: 0 115%; rotate: 8deg; } to { translate: 0 0; rotate: 0deg; } }
 
+/* Adentro del telón, los textos esperan a que se abra */
+.js [data-anim="wipe"] [data-split].is-in .lm-wi { animation-delay: calc(450ms + var(--w, 0) * 75ms); }
+
 /* La cinta de beneficios cuando la maneja el scroll (home.js) */
 .marquee.is-driven .marquee-track { animation: none; will-change: transform; }
 
@@ -532,4 +791,9 @@
     .js [data-anim="wipe"].is-in { animation: lm-fade 400ms ease both; }
     .js [data-split] .lm-wi { translate: none; rotate: none; }
     .js [data-split].is-in .lm-wi { animation: none; }
+
+    .lm-btn--wiggle { animation: none; }
+    .lm-sec,
+    .lm-sticker,
+    .lm-sec-arrow { transition: none; }
 }
