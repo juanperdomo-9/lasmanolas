@@ -1,51 +1,67 @@
 {% extends "base.html" %}
-{% load static cache_bust %}
-
-{% block extra_head %}
-<script>document.documentElement.classList.add('js');</script>
-<link rel="stylesheet" href="{% static_v 'css/home.css' %}">
-{% endblock %}
+{% load static %}
 
 {% block content %}
 
 <!-- ============================================= -->
-<!-- HERO — un tendedero: las prendas reales caen desde arriba, se enganchan
-     con un broche y quedan colgando, de la más chica (izquierda) a la más
-     grande (derecha). Se mueven con el mouse ("viento") y al scrollear; las
-     letras del título rebotan. Física en static/js/home.js. -->
+<!-- HERO — claro, consistente con el resto de la web.
+     TODO: cuando el cliente mande fotos, esta sección pasa a llevar la
+     foto real como background-image + overlay oscuro (el mismo patrón
+     de la referencia que mandó el cliente al principio). Por ahora, sin
+     foto, se mantiene clara para no quedar como un bloque oscuro suelto
+     encima de un sitio celeste. -->
 <!-- ============================================= -->
-<section class="lm-hero" data-reveal-section data-hero>
-    <div class="container relative z-10 pt-28 sm:pt-32 lg:pt-32">
-        <h1 class="lm-display" data-bounce aria-label="Ropa para crecer, de RN a XL.">Ropa para crecer,<br>de RN a XL.</h1>
-        <div class="mt-6 flex flex-col gap-6 sm:mt-8 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
-            <p class="lm-lead" data-enter style="--i:6">
-                Ajuares, conjuntos y abrigos para bebés, niños y adolescentes.
-                Elegís acá y lo coordinamos por WhatsApp, desde La Plata.
+<section class="relative flex min-h-[85vh] flex-col overflow-hidden bg-gradient-to-b from-sky-100 via-sky-50 to-sky-50">
+
+    <!-- textura sutil de puntitos, le da profundidad sin meter más color -->
+    <div class="absolute inset-0 opacity-40"
+         style="background-image: radial-gradient(var(--color-sky-500) 1px, transparent 1px); background-size: 26px 26px; -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, black 40%, transparent 80%); mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, black 40%, transparent 80%);">
+    </div>
+
+    <!-- centrado con margin en vez de -translate-x-1/2: la animación de
+         flotar ya usa "transform" para el translateY, y un transform de
+         Tailwind encima se pisaría con el del keyframe. -->
+    <div class="blob blob-float left-1/2 top-[-8%] ml-[-270px] h-[540px] w-[540px] bg-lilac-200 opacity-70"></div>
+    <div class="blob blob-float left-[12%] top-[30%] h-64 w-64 bg-blush-200 opacity-50" style="animation-delay:-4s"></div>
+    <div class="blob blob-float right-[10%] top-[10%] h-72 w-72 bg-sky-300 opacity-40" style="animation-delay:-2s"></div>
+
+    <!-- CONTENIDO -->
+    <div class="relative flex flex-1 items-center px-4">
+        <div class="mx-auto max-w-3xl py-16 text-center">
+            <span class="reveal inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-lilac-700 shadow-[var(--shadow-card)]">
+                Bebés · Niños · Adolescentes
+            </span>
+
+            <h1 class="reveal mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight text-ink sm:text-6xl lg:text-7xl" style="transition-delay:80ms">
+                Ropita con amor,
+                <span class="text-gradient block">en cada etapa.</span>
+            </h1>
+
+            <p class="reveal mx-auto mt-6 max-w-xl text-lg text-ink-soft" style="transition-delay:160ms">
+                Acompañamos el crecimiento de tu familia con prendas suaves y de calidad premium,
+                desde los primeros días de vida hasta la adolescencia.
             </p>
-            <div class="shrink-0" data-enter style="--i:7">
-                <a href="#secciones" class="lm-btn">
-                    Ver el catálogo
-                    <svg class="lm-btn-arrow h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+
+            <div class="reveal mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row" style="transition-delay:240ms">
+                <a href="#secciones" class="btn-lift w-full rounded-full bg-aurora px-8 py-4 text-center text-sm font-bold text-white shadow-[var(--shadow-button)] sm:w-auto">
+                    Ver catálogo
+                </a>
+                <a href="{{ site_config.whatsapp_link }}" target="_blank" rel="noopener"
+                   class="btn-lift flex w-full items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold text-ink shadow-[var(--shadow-card)] sm:w-auto">
+                    <svg class="h-4 w-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2z"/></svg>
+                    Hablar por WhatsApp
                 </a>
             </div>
         </div>
     </div>
 
-    {% if clothesline %}
-    <div class="lm-line" data-clothesline>
-        <svg class="lm-rope" aria-hidden="true"><path data-rope d=""/></svg>
-        {% for item in clothesline %}
-        <a href="{{ item.product.get_absolute_url }}" class="lm-hang{% if forloop.counter > 4 %} lm-hang--extra{% endif %}"
-           data-hang style="--n:{{ forloop.counter0 }}; --count:{{ clothesline|length }}">
-            <span class="lm-pin" aria-hidden="true"></span>
-            <span class="lm-polaroid">
-                <img src="{{ item.product.main_image.url }}" alt="{{ item.product.name }}" width="600" height="750" decoding="async">
-                {% if item.size %}<span class="lm-tag">{{ item.size }}</span>{% endif %}
-            </span>
-        </a>
-        {% endfor %}
-    </div>
-    {% endif %}
+    <!-- INDICADOR DE SCROLL — pegado abajo, el marquee cierra el hero justo después -->
+    <a href="#secciones" class="relative flex flex-col items-center gap-2 pb-6 text-ink-soft/70 transition hover:text-lilac-700">
+        <span class="text-[10px] font-bold uppercase tracking-widest">Descubrí más</span>
+        <span class="scroll-cue flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-[var(--shadow-card)]">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg>
+        </span>
+    </a>
 </section>
 
 <!-- ============================================= -->
@@ -149,84 +165,42 @@
 <!-- ============================================= -->
 <!-- POR QUÉ ELEGIRNOS -->
 <!-- ============================================= -->
-<section class="bg-surface-soft" data-reveal-section data-why>
-    <div class="container grid gap-y-12 py-24 lg:grid-cols-12 lg:gap-x-10 lg:py-36">
-
-        <div class="lg:col-span-3">
-            <h2 class="lm-h2" data-enter style="--i:0">Por qué Las Manolas</h2>
-            <p class="lm-body mt-5 max-w-[30ch]" data-enter style="--i:1">
-                Una tienda de La Plata que te atiende de verdad, del primer body al primer jean.
-            </p>
+<section class="bg-surface-soft py-20 sm:py-28">
+    <div class="container">
+        <div class="reveal mx-auto max-w-xl text-center">
+            <p class="text-sm font-bold uppercase tracking-widest text-sky-700">Por qué elegirnos</p>
+            <h2 class="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">Calidad que se nota</h2>
         </div>
 
-        <div class="lm-specs lg:col-span-9">
-
-            <!-- 1 · Telas suaves -->
-            <figure class="lm-spec" style="--i:0">
-                <div class="lm-spec-tile" style="background-color: var(--color-blush-100)">
-                    {% if why_photos.0 %}<img src="{{ why_photos.0.main_image.url }}" alt="{{ why_photos.0.name }}" width="1200" height="1500" loading="lazy" decoding="async">{% endif %}
+        <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4" data-stagger>
+            {% for item in "1234" %}
+            <div class="rounded-[28px] bg-surface p-7 shadow-[var(--shadow-card)]">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-aurora text-white">
+                    {% if forloop.counter == 1 %}
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5 5 0 0 0-7.1 0L12 6.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 20.4l8.8-8.7a5 5 0 0 0 0-7.1Z"/></svg>
+                    {% elif forloop.counter == 2 %}
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+                    {% elif forloop.counter == 3 %}
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8h11l3 4v6h-3M5 8v10h3M5 8V5h9v3"/><circle cx="8" cy="18" r="2"/><circle cx="16" cy="18" r="2"/></svg>
+                    {% else %}
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+                    {% endif %}
                 </div>
-                <figcaption>
-                    <p class="lm-name">Telas suaves</p>
-                    <p class="lm-fact">Algodón y telas suaves, elegidas para la piel de los más chicos.</p>
-                </figcaption>
-            </figure>
-
-            <!-- 2 · De RN a XL (doble) -->
-            <figure class="lm-spec lm-spec--wide" style="--i:1">
-                <div class="lm-spec-tile" style="background-color: var(--color-sky-100)">
-                    {% if why_photos.1 %}<img src="{{ why_photos.1.main_image.url }}" alt="{{ why_photos.1.name }}" width="1200" height="1500" loading="lazy" decoding="async">{% endif %}
-                </div>
-                <figcaption>
-                    <p class="lm-name">De RN a XL</p>
-                    <p class="lm-fact">{{ size_count }} talles, de recién nacido a adolescente.</p>
-                </figcaption>
-            </figure>
-
-            <!-- 3 · Te atiende una persona (el mensaje real que arma el checkout) -->
-            <figure class="lm-spec" style="--i:2">
-                <div class="lm-spec-tile lm-chat" style="background-color: var(--color-mint-100)" data-ui aria-hidden="true">
-                    <div class="lm-chat-head">
-                        <span class="lm-chat-avatar">LM</span>
-                        <span><span class="lm-chat-name block">Las Manolas</span><span class="lm-chat-status block">en línea</span></span>
-                    </div>
-                    <div class="lm-bubble lm-bubble--out">
-                        Hola! Quiero coordinar mi pedido #124 (Transferencia).
-                        <span class="lm-bubble-meta">15:42 <svg viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m1 6 3 3 6-7M6 9l1 1 6-8"/></svg></span>
-                    </div>
-                    <div class="lm-bubble lm-bubble--in lm-typing"><i></i><i></i><i></i></div>
-                </div>
-                <figcaption>
-                    <p class="lm-name">Te atiende una persona</p>
-                    <p class="lm-fact">Cada pedido lo coordinamos por WhatsApp, con alguien de carne y hueso.</p>
-                </figcaption>
-            </figure>
-
-            <!-- 4 · La Plata y Magdalena -->
-            <figure class="lm-spec" style="--i:3">
-                <div class="lm-spec-tile lm-map" style="background-color: var(--color-amber-100)">
-                    <img src="{% static 'img/home/la-plata-1888.jpg' %}" alt="Plano de la ciudad de La Plata de 1888, con sus diagonales" width="960" height="1200" loading="lazy" decoding="async">
-                </div>
-                <figcaption>
-                    <p class="lm-name">La Plata y Magdalena</p>
-                    <p class="lm-fact">Envío coordinado en la zona. Al resto del país, por Andreani.</p>
-                </figcaption>
-            </figure>
-
-            <!-- 5 · Pagás como prefieras -->
-            <figure class="lm-spec" style="--i:4">
-                <div class="lm-spec-tile" style="background-color: var(--color-lilac-100)">
-                    {% if why_photos.2 %}<img src="{{ why_photos.2.main_image.url }}" alt="{{ why_photos.2.name }}" width="1200" height="1500" loading="lazy" decoding="async">{% endif %}
-                </div>
-                <figcaption>
-                    <p class="lm-name">Pagás como prefieras</p>
-                    <p class="lm-fact">Efectivo o transferencia{% if mp_available %}, o con Mercado Pago{% endif %}.</p>
-                </figcaption>
-            </figure>
-
-            <p class="lm-credit">Plano: “Plano General de La Plata”, M. Voyer / J. Peuser, 1888. Dominio público, vía Wikimedia Commons.</p>
+                <p class="mt-4 font-bold text-ink">
+                    {% if forloop.counter == 1 %}Hecho con amor
+                    {% elif forloop.counter == 2 %}Envíos rápidos
+                    {% elif forloop.counter == 3 %}Atención por WhatsApp
+                    {% else %}Pagá como prefieras{% endif %}
+                </p>
+                <p class="mt-2 text-sm text-ink-soft">
+                    {% if forloop.counter == 1 %}Seleccionamos telas suaves y seguras para la piel más delicada.
+                    {% elif forloop.counter == 2 %}Coordinamos entregas a todo el país en tiempo récord.
+                    {% elif forloop.counter == 3 %}Te acompañamos antes, durante y después de tu compra.
+                    {% else %}Mercado Pago, efectivo o transferencia — vos elegís.{% endif %}
+                </p>
+            </div>
+            {% endfor %}
         </div>
-
     </div>
 </section>
 
@@ -244,8 +218,4 @@
     </div>
 </section>
 
-{% endblock %}
-
-{% block extra_scripts %}
-<script src="{% static_v 'js/home.js' %}" defer></script>
 {% endblock %}
