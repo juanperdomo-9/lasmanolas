@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!reduceMotion) {
         initScrollEffects();
         initVelocityMarquee();
+        initMouseScenes();
     }
 
 });
@@ -69,16 +70,21 @@ function initScrollAnims() {
     }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
 
     // El "telón" arranca recortado a ancho cero y el navegador nunca lo da
-    // por visible: para esos se mira la posición a mano al scrollear.
-    const wipes = [];
-    targets.forEach((el) => (el.dataset.anim === "wipe" ? wipes.push(el) : observer.observe(el)));
+    // por visible (ni a él ni a lo que tiene adentro): se mira su posición a
+    // mano al scrollear, y cuando se abre arrancan también sus textos.
+    const wipes = [...targets].filter((el) => el.dataset.anim === "wipe");
+    const insideWipe = (el) => wipes.some((w) => w !== el && w.contains(el));
+    targets.forEach((el) => { if (!wipes.includes(el) && !insideWipe(el)) observer.observe(el); });
 
     if (wipes.length) {
         const check = () => {
             wipes.forEach((el) => {
                 if (el.classList.contains("is-in")) return;
                 const r = el.getBoundingClientRect();
-                if (r.top < window.innerHeight * 0.85 && r.bottom > 0) el.classList.add("is-in");
+                if (r.top < window.innerHeight * 0.85 && r.bottom > 0) {
+                    el.classList.add("is-in");
+                    el.querySelectorAll("[data-anim], [data-split]").forEach((child) => child.classList.add("is-in"));
+                }
             });
             if (wipes.every((el) => el.classList.contains("is-in"))) window.removeEventListener("scroll", check);
         };
@@ -103,6 +109,10 @@ function initScrollEffects() {
     const heroText = document.querySelector("[data-hero-parallax]");
     const hero = heroText?.closest("[data-hero]");
     const grow = [...document.querySelectorAll("[data-scroll-grow]")];
+    const tapes = [...document.querySelectorAll("[data-tape]")].map((el) => ({
+        track: el.querySelector(".lm-tape-track"),
+        group: el.querySelector(".lm-tape-group"),
+    }));
 
     // Posición "de reposo" de cada elemento (sin su propio transform), para
     // no medir algo que ya movimos y entrar en un ida y vuelta.
@@ -144,6 +154,14 @@ function initScrollEffects() {
             const p = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.75)));
             el.style.transform = `scale(${(0.82 + 0.18 * p).toFixed(4)})`;
         });
+
+        // La cinta métrica se desliza con el scroll (y vuelve a empezar sin salto).
+        tapes.forEach(({ track, group }) => {
+            if (!track || !group) return;
+            const w = group.offsetWidth;
+            const x = -((y * 0.6) % w) - w * 0.5;
+            track.style.transform = `translate3d(${x.toFixed(1)}px, 0, 0)`;
+        });
     }
 
     function onScroll() {
@@ -157,6 +175,56 @@ function initScrollEffects() {
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", () => { measure(); update(); });
     window.addEventListener("load", () => { measure(); update(); });
+
+}
+
+
+// [data-mouse-scene]: adentro, cada [data-depth="n"] se corre hasta n px
+// siguiendo al mouse (los negativos para el otro lado → efecto de capas).
+// Se suaviza con un lerp y el loop se apaga cuando llegó.
+function initMouseScenes() {
+
+    document.querySelectorAll("[data-mouse-scene]").forEach((scene) => {
+
+        const layers = [...scene.querySelectorAll("[data-depth]")].map((el) => ({
+            el, depth: parseFloat(el.dataset.depth) || 0, x: 0, y: 0,
+        }));
+        if (!layers.length) return;
+
+        let tx = 0;
+        let ty = 0;
+        let rafId = null;
+
+        function frame() {
+            let moving = false;
+            layers.forEach((l) => {
+                l.x += (tx * l.depth - l.x) * 0.08;
+                l.y += (ty * l.depth - l.y) * 0.08;
+                if (Math.abs(tx * l.depth - l.x) > 0.1 || Math.abs(ty * l.depth - l.y) > 0.1) moving = true;
+                l.el.style.transform = `translate3d(${l.x.toFixed(2)}px, ${l.y.toFixed(2)}px, 0)`;
+            });
+            rafId = moving ? requestAnimationFrame(frame) : null;
+        }
+
+        function wake() {
+            if (!rafId) rafId = requestAnimationFrame(frame);
+        }
+
+        scene.addEventListener("pointermove", (e) => {
+            if (e.pointerType !== "mouse") return;
+            const r = scene.getBoundingClientRect();
+            tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+            ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+            wake();
+        });
+
+        scene.addEventListener("pointerleave", () => {
+            tx = 0;
+            ty = 0;
+            wake();
+        });
+
+    });
 
 }
 
