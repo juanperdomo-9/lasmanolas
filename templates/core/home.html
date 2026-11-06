@@ -211,8 +211,39 @@
 
             <!-- 4 · La Plata y Magdalena -->
             <figure class="lm-spec" style="--i:3">
-                <div class="lm-spec-tile lm-map" style="background-color: var(--color-amber-100)">
-                    <img src="{% static 'img/home/la-plata-1888.jpg' %}" alt="Plano de la ciudad de La Plata de 1888, con sus diagonales" width="960" height="1200" loading="lazy" decoding="async">
+                <div class="lm-spec-tile lm-map" style="background-color: var(--color-sky-100)">
+                    <!-- La Plata dibujada: el cuadrado con sus diagonales, el pin que cae y
+                         el caminito hasta Magdalena que se dibuja solo (home.css) -->
+                    <svg viewBox="0 0 400 500" role="img" aria-label="Mapa: La Plata, con sus diagonales, y el camino hasta Magdalena">
+                        <defs>
+                            <mask id="lmRouteMask" maskUnits="userSpaceOnUse">
+                                <path class="lm-map-draw" d="M296 304 C 350 350, 292 398, 338 446" stroke="#fff" stroke-width="14" fill="none" pathLength="1"/>
+                            </mask>
+                        </defs>
+
+                        <text x="60" y="36" class="lm-map-label">La Plata</text>
+                        <rect x="60" y="50" width="280" height="280" rx="28" fill="#fff"/>
+
+                        <path d="M88 50V330M116 50V330M144 50V330M172 50V330M228 50V330M256 50V330M284 50V330M312 50V330M60 78H340M60 106H340M60 134H340M60 162H340M60 218H340M60 246H340M60 274H340M60 302H340" stroke="var(--color-lilac-100)" stroke-width="2"/>
+                        <path d="M200 50V330M60 190H340" stroke="var(--color-lilac-300)" stroke-width="4"/>
+                        <path d="M76 66 324 314M324 66 76 314" stroke="var(--color-lilac-500)" stroke-width="5" stroke-linecap="round"/>
+
+                        <circle cx="130" cy="120" r="7" fill="var(--color-mint-300)"/>
+                        <circle cx="270" cy="120" r="7" fill="var(--color-mint-300)"/>
+                        <circle cx="130" cy="260" r="7" fill="var(--color-mint-300)"/>
+                        <circle cx="270" cy="260" r="7" fill="var(--color-mint-300)"/>
+                        <circle cx="200" cy="190" r="13" fill="var(--color-blush-300)"/>
+
+                        <path d="M296 304 C 350 350, 292 398, 338 446" stroke="var(--color-ink)" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 11" fill="none" mask="url(#lmRouteMask)"/>
+                        <circle cx="338" cy="446" r="9" fill="var(--color-ink)"/>
+                        <text x="320" y="452" text-anchor="end" class="lm-map-label">Magdalena</text>
+
+                        <circle class="lm-map-pulse" cx="200" cy="190" r="12" fill="none" stroke="var(--color-blush-500)" stroke-width="3"/>
+                        <g class="lm-map-pin">
+                            <path d="M200 190c-15-17-24-27-24-38a24 24 0 1 1 48 0c0 11-9 21-24 38z" fill="var(--color-blush-500)"/>
+                            <circle cx="200" cy="152" r="8" fill="#fff"/>
+                        </g>
+                    </svg>
                 </div>
                 <figcaption>
                     <p class="lm-name">La Plata y Magdalena</p>
@@ -230,8 +261,6 @@
                     <p class="lm-fact">Efectivo o transferencia{% if mp_available %}, o con Mercado Pago{% endif %}.</p>
                 </figcaption>
             </figure>
-
-            <p class="lm-credit">Plano: “Plano General de La Plata”, M. Voyer / J. Peuser, 1888. Dominio público, vía Wikimedia Commons.</p>
         </div>
 
     </div>
