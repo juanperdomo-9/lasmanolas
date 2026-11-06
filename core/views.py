@@ -1,7 +1,7 @@
 from django.db.models import Prefetch
 from django.shortcuts import render
 
-from catalog.models import Category, Product, ProductImage, ProductVariant, Size
+from catalog.models import Product, ProductImage, ProductVariant, Size
 from payments.mp_client import is_configured as mp_is_configured
 
 
@@ -42,28 +42,10 @@ def home(request):
         hanging.append({'product': p, 'size': size.name if size else '', 'order': size.order if size else 999})
     hanging.sort(key=lambda h: h['order'])
 
-    # Tarjetas de sección: color de la sección + hasta 2 fotos reales de
-    # prendas de esa sección + cuántas prendas publicadas tiene.
-    sections = []
-    for section in Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories').order_by('order', 'name'):
-        in_section = base.filter(category__parent=section)
-        sections.append({
-            'section': section,
-            'photos': [p.main_image.url for p in in_section if p.main_image][:2],
-            'count': in_section.count(),
-            'subcategories': [c.name for c in section.subcategories.all() if c.is_active][:4],
-        })
-
-    sizes = [s.name for s in Size.objects.all() if not _is_one_size(s.name)]
-
     return render(request, 'core/home.html', {
         'featured_products': featured_products,
         'clothesline': hanging,
         'why_photos': with_photo[:3],
-        'cta_photos': [p.main_image.url for p in with_photo[:4]],
-        'home_sections': sections,
-        'sizes': sizes,
-        'size_count': len(sizes),
-        'product_count': base.count(),
+        'size_count': sum(1 for s in Size.objects.all() if not _is_one_size(s.name)),
         'mp_available': mp_is_configured(),
     })
