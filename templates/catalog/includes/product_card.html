@@ -1,5 +1,5 @@
 {% load static %}
-<a href="{{ product.get_absolute_url }}" data-spotlight class="group product-card relative overflow-hidden rounded-[28px] bg-surface p-3 shadow-[var(--shadow-card)] transition-all duration-500 ease-[var(--ease-premium)] hover:-translate-y-1.5 hover:shadow-[var(--shadow-cardHover)]">
+<a href="{{ product.get_absolute_url }}" data-spotlight class="group product-card relative block h-full overflow-hidden rounded-[28px] bg-surface p-3 shadow-[var(--shadow-card)] transition-all duration-500 ease-[var(--ease-premium)] hover:-translate-y-1.5 hover:shadow-[var(--shadow-cardHover)]">
     <div class="spotlight"></div>
 
     {% if product.discount_percent %}
