@@ -1,0 +1,251 @@
+/* ==========================================
+   LAS MANOLAS — product.css (detalle de producto)
+   Sin capa a propósito (ver home.css). El movimiento compartido (entradas
+   data-anim / data-split) está en motion.css; acá va lo propio de esta
+   página: galería, cantidad, botón de agregar, barra fija del celu.
+========================================== */
+
+/* ---------- Galería ---------- */
+
+.pd-main {
+    --clip-r: 0px;
+    position: relative;
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    overflow: hidden;
+    background: var(--color-surface-soft);
+    touch-action: pan-y; /* deslizar de costado = cambiar foto; vertical = scroll */
+}
+
+@media (min-width: 768px) {
+    .pd-main { --clip-r: 28px; border-radius: 28px; }
+}
+
+.pd-main-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform-origin: var(--zx, 50%) var(--zy, 50%);
+    transition: transform 450ms var(--lm-ease-out);
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* Al entrar, la foto se "acomoda" (se achica un poco) mientras se destapa */
+.js .is-in > .pd-main-img,
+.js .pd-main.is-in .pd-main-img { animation: pd-settle 1.4s var(--lm-ease-out) both; }
+
+@keyframes pd-settle { from { scale: 1.14; } to { scale: 1; } }
+
+/* Zoom con el mouse: la foto se agranda desde donde apunta el cursor */
+@media (hover: hover) and (pointer: fine) {
+    .pd-main.is-zoomable { cursor: zoom-in; }
+    .pd-main.is-zoomed .pd-main-img { transform: scale(1.9); }
+}
+
+/* La foto nueva que entra deslizándose al cambiar (la arma gallery.js) */
+.pd-main-next {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+.pd-swipe-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 0.9rem;
+    translate: -50% 0;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--color-ink);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    pointer-events: none;
+    animation: pd-hint 3.2s ease-in-out 1.6s both;
+}
+
+@keyframes pd-hint {
+    0% { opacity: 0; translate: -50% 8px; }
+    12%, 75% { opacity: 1; translate: -50% 0; }
+    40% { translate: calc(-50% - 10px) 0; }
+    50% { translate: calc(-50% + 6px) 0; }
+    60% { translate: -50% 0; }
+    100% { opacity: 0; translate: -50% 0; }
+}
+
+.pd-thumb { transition: scale 300ms var(--lm-spring), opacity 200ms ease; }
+
+@media (hover: hover) and (pointer: fine) {
+    .pd-thumb:hover { scale: 1.06; }
+}
+
+/* ---------- Cantidad (− número +) ---------- */
+
+.pd-qty {
+    display: inline-flex;
+    align-items: center;
+    height: 3.5rem;
+    border-radius: 999px;
+    background: var(--color-surface-soft);
+}
+
+.pd-qty-btn {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 100%;
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    transition: transform 160ms var(--lm-ease-out), color 200ms ease;
+}
+
+.pd-qty-btn:active { transform: scale(0.85); }
+.pd-qty-btn:disabled { color: var(--color-ink-soft); opacity: 0.4; cursor: not-allowed; }
+
+.pd-qty-input {
+    width: 2.25rem;
+    background: transparent;
+    text-align: center;
+    font-size: 1.0625rem;
+    font-weight: 800;
+    color: var(--color-ink);
+}
+
+/* ---------- Botón agregar ---------- */
+
+.pd-add {
+    flex: 1;
+    height: 3.5rem;
+    padding: 0 1.5rem;
+    border-radius: 999px;
+    background: var(--color-ink);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: transform 160ms var(--lm-ease-out), background-color 250ms ease, opacity 200ms ease;
+}
+
+.pd-add:active:not(:disabled) { transform: scale(0.97); }
+.pd-add:disabled { opacity: 0.45; cursor: not-allowed; }
+
+@media (hover: hover) and (pointer: fine) {
+    .pd-add:hover:not(:disabled) { background: #3a3346; }
+}
+
+/* Recién agregado: verde y un saltito */
+.pd-add.is-added {
+    background: var(--color-mint-700);
+    opacity: 1;
+    animation: pd-added 600ms var(--lm-spring);
+}
+
+@keyframes pd-added {
+    0% { scale: 1; }
+    35% { scale: 1.06; }
+    100% { scale: 1; }
+}
+
+/* Si tocás "agregar" sin talle, el bloque de talles se sacude */
+.pd-shake { animation: pd-shake 500ms ease; }
+
+@keyframes pd-shake {
+    0%, 100% { translate: 0 0; }
+    20% { translate: -8px 0; }
+    40% { translate: 7px 0; }
+    60% { translate: -5px 0; }
+    80% { translate: 3px 0; }
+}
+
+/* ---------- Beneficios ---------- */
+
+.pd-perk {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-ink);
+}
+
+.pd-perk-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    color: var(--color-ink);
+}
+
+.pd-perk-icon svg { width: 1.25rem; height: 1.25rem; }
+
+/* ---------- Acordeón ---------- */
+
+.pd-acc-icon { transition: rotate 350ms var(--lm-spring); }
+details[open] .pd-acc-icon { rotate: 45deg; }
+[data-accordion-body] { overflow: hidden; }
+
+/* ---------- Barra fija de compra (celu) ---------- */
+
+.pd-buybar {
+    position: fixed;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 45;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.6rem 0.6rem 1.1rem;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 18px 40px -16px rgba(36, 31, 46, 0.45);
+    translate: 0 calc(100% + 1.5rem);
+    transition: translate 450ms var(--lm-ease-out);
+}
+
+.pd-buybar.is-visible { translate: 0 0; }
+
+.pd-add--bar {
+    flex: none;
+    height: 3rem;
+    padding: 0 1.25rem;
+    font-size: 0.9375rem;
+}
+
+/* El botón flotante de WhatsApp se corre para arriba mientras está la barra */
+[data-wa-float] { transition: translate 450ms var(--lm-ease-out), transform 350ms ease; }
+body.has-buybar [data-wa-float] { translate: 0 -4.75rem; }
+
+/* El carrito del navbar salta cuando le llega la prenda */
+.pd-cart-bump { animation: pd-bump 550ms var(--lm-spring); }
+
+@keyframes pd-bump {
+    0% { scale: 1; }
+    30% { scale: 1.3; }
+    100% { scale: 1; }
+}
+
+/* ---------- Movimiento reducido ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    .js .pd-main.is-in .pd-main-img,
+    .pd-swipe-hint,
+    .pd-add.is-added,
+    .pd-shake,
+    .pd-cart-bump { animation: none; }
+
+    .pd-main-img,
+    .pd-buybar,
+    [data-wa-float],
+    .pd-thumb,
+    .pd-acc-icon { transition: none; }
+
+    .pd-main.is-zoomed .pd-main-img { transform: none; }
+}

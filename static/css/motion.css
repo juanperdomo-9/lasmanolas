@@ -1,0 +1,98 @@
+/* ==========================================
+   LAS MANOLAS — motion.css (sistema de movimiento compartido, todas las páginas)
+   Sin capa a propósito (ver el comentario de home.css).
+
+   [data-anim="..."] entra cuando aparece en pantalla (motion.js le pone
+   .is-in), cada tipo desde un lado distinto. --i escalona dentro del grupo.
+   [data-split] parte un título en palabras que suben de a una.
+   Todo lo oculto antes de entrar va bajo `.js` (lo pone un script inline en
+   base.html): si el JS no corre, el contenido se ve igual.
+   Las entradas animan `translate`/`rotate`/`scale`/`opacity` sueltas (no
+   `transform`), así el fill-mode no pisa transforms de hover o de física.
+========================================== */
+
+:root {
+    --lm-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --lm-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --lm-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --lm-spring-soft: cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+
+.js [data-anim] { opacity: 0; }
+
+.js [data-anim].is-in {
+    animation-duration: 1s;
+    animation-timing-function: var(--lm-spring-soft);
+    animation-fill-mode: both;
+    animation-delay: calc(var(--i, 0) * 110ms);
+}
+
+.js [data-anim="left"].is-in { animation-name: lm-in-left; }
+.js [data-anim="right"].is-in { animation-name: lm-in-right; }
+.js [data-anim="up"].is-in { animation-name: lm-in-up; }
+.js [data-anim="pop"].is-in { animation-name: lm-in-pop; }
+.js [data-anim="tilt-left"].is-in { animation-name: lm-in-tilt-left; animation-duration: 1.2s; }
+.js [data-anim="tilt-right"].is-in { animation-name: lm-in-tilt-right; animation-duration: 1.2s; }
+
+/* El telón: la franja se abre desde el centro hacia los costados */
+.js [data-anim="wipe"] { opacity: 1; clip-path: inset(0 50% 0 50%); }
+.js [data-anim="wipe"].is-in { animation: lm-in-wipe 1.1s var(--lm-ease-out) both; }
+
+@keyframes lm-in-left { from { opacity: 0; translate: -140px 0; rotate: -3deg; } to { opacity: 1; translate: 0 0; rotate: 0deg; } }
+@keyframes lm-in-right { from { opacity: 0; translate: 140px 0; rotate: 3deg; } to { opacity: 1; translate: 0 0; rotate: 0deg; } }
+@keyframes lm-in-up { from { opacity: 0; translate: 0 70px; } to { opacity: 1; translate: 0 0; } }
+@keyframes lm-in-pop { from { opacity: 0; translate: 0 60px; scale: 0.7; } to { opacity: 1; translate: 0 0; scale: 1; } }
+@keyframes lm-in-tilt-left { from { opacity: 0; translate: -55vw 90px; rotate: -16deg; } to { opacity: 1; translate: 0 0; rotate: 0deg; } }
+@keyframes lm-in-tilt-right { from { opacity: 0; translate: 55vw 90px; rotate: 16deg; } to { opacity: 1; translate: 0 0; rotate: 0deg; } }
+@keyframes lm-in-wipe { from { clip-path: inset(0 50% 0 50%); } to { clip-path: inset(0 0 0 0); } }
+
+/* Títulos por palabras: cada una sube desde abajo de su "ventanita" */
+.lm-wm {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
+}
+
+.lm-wi { display: inline-block; }
+.js [data-split] .lm-wi { translate: 0 115%; rotate: 8deg; }
+
+.js [data-split].is-in .lm-wi {
+    animation: lm-word-up 900ms var(--lm-ease-out) both;
+    animation-delay: calc(var(--w, 0) * 75ms);
+}
+
+@keyframes lm-word-up { from { translate: 0 115%; rotate: 8deg; } to { translate: 0 0; rotate: 0deg; } }
+
+/* Adentro del telón, los textos esperan a que se abra */
+.js [data-anim="wipe"] [data-split].is-in .lm-wi { animation-delay: calc(450ms + var(--w, 0) * 75ms); }
+
+/* Se destapa de abajo hacia arriba (fotos grandes). Arranca destapada un
+   tercio: si arrancara en cero, el navegador no la daría por visible y
+   nunca entraría (mismo problema que el telón). --clip-r = radio de borde. */
+.js [data-anim="clip"] { opacity: 1; clip-path: inset(34% 0 0 0 round var(--clip-r, 0px)); }
+.js [data-anim="clip"].is-in { animation: lm-in-clip 1.1s var(--lm-ease-out) both; }
+
+@keyframes lm-in-clip {
+    from { clip-path: inset(34% 0 0 0 round var(--clip-r, 0px)); }
+    to { clip-path: inset(0 0 0 0 round var(--clip-r, 0px)); }
+}
+
+@keyframes lm-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* Feedback al apretar: cualquier botón/link con .lm-press */
+.lm-press { transition: transform 160ms var(--lm-ease-out); }
+.lm-press:active { transform: scale(0.97); }
+
+/* Movimiento reducido: se mantiene el fundido, se saca todo desplazamiento */
+@media (prefers-reduced-motion: reduce) {
+    .js [data-anim].is-in { animation-name: lm-fade; animation-duration: 400ms; animation-timing-function: ease; }
+    .js [data-anim="wipe"] { clip-path: none; }
+    .js [data-anim="wipe"].is-in { animation: lm-fade 400ms ease both; }
+    .js [data-split] .lm-wi { translate: none; rotate: none; }
+    .js [data-split].is-in .lm-wi { animation: none; }
+    .lm-press:active { transform: none; }
+    .js [data-anim="clip"] { clip-path: none; }
+    .js [data-anim="clip"].is-in { animation: lm-fade 400ms ease both; }
+}

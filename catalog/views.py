@@ -1,6 +1,8 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 
+from payments.mp_client import is_configured as mp_is_configured
+
 from .models import Category, Product
 
 
@@ -88,4 +90,5 @@ def product_detail(request, section_slug, subcategory_slug, product_slug):
         'product': product,
         'sizes': sizes,
         'colors': colors,
+        'mp_available': mp_is_configured(),
     })

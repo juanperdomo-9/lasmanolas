@@ -21,6 +21,8 @@
 
     <link rel="stylesheet" href="{% static_v 'css/output.css' %}">
     <link rel="stylesheet" href="{% static_v 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static_v 'css/motion.css' %}">
+    <script>document.documentElement.classList.add('js');</script>
 
     {% block extra_head %}{% endblock %}
 </head>
@@ -35,6 +37,7 @@
     {% include "includes/footer.html" %}
     {% include "includes/cart_drawer.html" %}
 
+    <script src="{% static_v 'js/motion.js' %}" defer></script>
     <script src="{% static_v 'js/animations.js' %}" defer></script>
     <script src="{% static_v 'js/spotlight.js' %}" defer></script>
     <script src="{% static_v 'js/navbar.js' %}" defer></script>

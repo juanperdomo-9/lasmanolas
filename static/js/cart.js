@@ -90,6 +90,7 @@ function initAddToCartForms() {
 
             const btn = form.querySelector("[data-add-to-cart-submit]");
             const originalText = btn ? btn.textContent : "";
+            let added = false;
 
             if (btn) {
                 btn.disabled = true;
@@ -105,6 +106,21 @@ function initAddToCartForms() {
                     return;
                 }
 
+                added = true;
+
+                // Detalle de producto: la foto vuela al carrito del navbar
+                // y el botón se pone verde con "¡Agregado!" (product.js).
+                if (form.hasAttribute("data-fly-to-cart") && window.lmFlyToCart) {
+
+                    if (btn) {
+                        btn.textContent = "¡Agregado!";
+                        btn.classList.add("is-added");
+                    }
+
+                    await window.lmFlyToCart(form);
+
+                }
+
                 applyCartResponse(data);
                 openCartDrawer();
 
@@ -115,8 +131,16 @@ function initAddToCartForms() {
             } finally {
 
                 if (btn) {
-                    btn.disabled = false;
-                    btn.textContent = originalText;
+
+                    const restore = () => {
+                        btn.classList.remove("is-added");
+                        btn.disabled = false;
+                        btn.textContent = originalText;
+                    };
+
+                    if (added && btn.classList.contains("is-added")) setTimeout(restore, 1400);
+                    else restore();
+
                 }
 
             }

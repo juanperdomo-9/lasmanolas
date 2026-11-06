@@ -6,11 +6,25 @@
 // en el color elegido (no todos los talles del producto).
 // ===========================================
 
+const VS_REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll("[data-variant-selector]").forEach(initSelector);
 
 });
+
+// Saltito (resorte) al elegir una pill o al aparecer un talle nuevo.
+function popIn(el, delay = 0, from = 0.6) {
+
+    if (VS_REDUCE || !el.animate) return;
+
+    el.animate(
+        [{ scale: from, opacity: from < 0.8 ? 0 : 1 }, { scale: 1, opacity: 1 }],
+        { duration: 480, delay, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)", fill: "backwards" },
+    );
+
+}
 
 function initSelector(root) {
 
@@ -63,7 +77,10 @@ function initSelector(root) {
 
     }
 
-    function render() {
+    let firstRender = true;
+    let lastStockText = null;
+
+    function render(changed) {
 
         // Talles que no vienen en el color elegido: se esconden del todo
         // (no solo deshabilitados) — así el usuario ve directamente "sus"
@@ -71,7 +88,13 @@ function initSelector(root) {
         sizeButtons.forEach((btn) => {
 
             const isValid = !validSizeIds || validSizeIds.has(btn.dataset.sizeOption);
+            const wasHidden = btn.classList.contains("hidden");
             btn.classList.toggle("hidden", !isValid);
+
+            // Al cambiar de color, los talles que aparecen entran de a uno
+            if (!firstRender && isValid && (wasHidden || changed === "color")) {
+                popIn(btn, sizeButtons.filter((b) => !b.classList.contains("hidden")).indexOf(btn) * 45);
+            }
             btn.classList.toggle("is-selected", isValid && btn.dataset.sizeOption === String(selectedSize));
 
         });
@@ -104,7 +127,7 @@ function initSelector(root) {
             }
 
             if (qtyInput) qtyInput.max = match.stock;
-            if (stockMsg) stockMsg.textContent = inStock ? `${match.stock} disponibles` : "Sin stock";
+            setStock(inStock ? `${match.stock} disponibles` : "Sin stock");
 
         } else {
 
@@ -117,8 +140,26 @@ function initSelector(root) {
 
             }
 
-            if (stockMsg) stockMsg.textContent = "";
+            setStock("");
 
+        }
+
+        firstRender = false;
+
+    }
+
+    // El texto de stock entra subiendo cuando cambia
+    function setStock(text) {
+
+        if (!stockMsg || text === lastStockText) return;
+        lastStockText = text;
+        stockMsg.textContent = text;
+
+        if (!firstRender && text && !VS_REDUCE && stockMsg.animate) {
+            stockMsg.animate(
+                [{ translate: "0 6px", opacity: 0 }, { translate: "0 0", opacity: 1 }],
+                { duration: 320, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+            );
         }
 
     }
@@ -128,7 +169,8 @@ function initSelector(root) {
         btn.addEventListener("click", () => {
 
             selectedSize = btn.dataset.sizeOption;
-            render();
+            render("size");
+            popIn(btn, 0, 0.82);
 
         });
 
@@ -147,7 +189,8 @@ function initSelector(root) {
                 selectedSize = pickFirstValidSize();
             }
 
-            render();
+            render("color");
+            popIn(btn, 0, 0.75);
 
         });
 
