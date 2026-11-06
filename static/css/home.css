@@ -1,0 +1,462 @@
+/* ==========================================
+   LAS MANOLAS — home.css (hero "tendedero" + "Por qué Las Manolas")
+   Sin capa a propósito: estas clases son propias, y tienen que ganarle a la
+   transición genérica "a, button { transition: all }" de styles.css.
+
+   Entradas: @keyframes sobre `translate`/`rotate`/`scale`/`opacity` (las
+   propiedades sueltas, no `transform`), así el `fill-mode: both` no pisa el
+   `transform` que pone la física del tendedero ni el de apretar un botón.
+   Todo lo oculto antes de entrar va bajo `.js`: si el script no corre, el
+   contenido se ve igual.
+========================================== */
+
+:root {
+    --lm-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --lm-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --lm-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --lm-radius: 24px;
+}
+
+/* ---------- Tipografía ---------- */
+
+.lm-display {
+    font-weight: 800;
+    font-size: clamp(2.25rem, 0.6rem + 6.6vw, 7.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: var(--color-ink);
+}
+
+/* Letras sueltas (las arma home.js): palabra entera sin cortarse, letra
+   que entra rebotando, y por dentro la que se sacude al pasarle el mouse. */
+.lm-word { display: inline-block; white-space: nowrap; }
+.lm-ch { display: inline-block; }
+.lm-ch-i { display: inline-block; transition: color 300ms ease; }
+
+.lm-h2 {
+    font-weight: 800;
+    font-size: clamp(2.25rem, 1.4rem + 2.2vw, 3.25rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--color-ink);
+}
+
+.lm-lead,
+.lm-body {
+    font-size: 1.125rem;
+    line-height: 1.55;
+    color: var(--color-ink);
+}
+
+.lm-lead { max-width: 42ch; }
+
+.lm-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-ink);
+}
+
+.lm-fact,
+.lm-credit {
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: var(--color-ink-soft);
+}
+
+/* ---------- Botón ---------- */
+
+.lm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 3.5rem;
+    padding: 0 1.75rem;
+    border-radius: 999px;
+    background: var(--color-ink);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: transform 160ms var(--lm-ease-out), background-color 200ms ease;
+}
+
+.lm-btn:active { transform: scale(0.97); }
+.lm-btn-arrow { transition: transform 250ms var(--lm-ease-out); }
+
+@media (hover: hover) and (pointer: fine) {
+    .lm-btn:hover { background: #3a3346; }
+    .lm-btn:hover .lm-btn-arrow { transform: translateX(3px); }
+
+    .lm-ch:hover .lm-ch-i {
+        color: var(--hc, var(--color-lilac-500));
+        animation: lm-jelly 700ms ease both;
+    }
+}
+
+/* ---------- Hero: el tendedero ---------- */
+
+.lm-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-sky-50);
+}
+
+.lm-line {
+    position: relative;
+    z-index: 20; /* las prendas caen por delante del título */
+    height: clamp(300px, 46svh, 540px);
+    margin-top: clamp(1rem, 3vh, 2.5rem);
+}
+
+.lm-rope {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.lm-rope path {
+    fill: none;
+    stroke: #b9936f;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+}
+
+.lm-hang {
+    --s: calc(0.72 + 0.62 * var(--n) / max(1, var(--count) - 1));
+    position: absolute;
+    top: 40px;
+    left: calc((var(--n) + 0.5) / var(--count) * 100%);
+    width: calc(var(--s) * clamp(78px, 10.5vw, 190px));
+    translate: -50% 0;
+    transform-origin: 50% 0;
+    z-index: 1;
+    cursor: grab;
+    touch-action: pan-y; /* arrastrar de costado = revolearla; vertical = scroll */
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.lm-hang:active { cursor: grabbing; }
+
+/* Con JS la física manda: posición y giro por `transform`. */
+.lm-line.is-live .lm-hang {
+    top: 0;
+    left: 0;
+    translate: none;
+    will-change: transform;
+}
+
+.lm-pin {
+    position: absolute;
+    left: 50%;
+    top: -16px;
+    width: 12px;
+    height: 32px;
+    translate: -50% 0;
+    border-radius: 3px;
+    background: #dcae78;
+    z-index: 2;
+}
+
+.lm-pin::after {
+    content: "";
+    position: absolute;
+    inset: 13px 0 0;
+    border-radius: 0 0 3px 3px;
+    background: #c99257;
+}
+
+.lm-polaroid {
+    position: relative;
+    display: block;
+    padding: 6% 6% 20%;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 18px 30px -14px rgba(36, 31, 46, 0.35);
+    transition: scale 300ms var(--lm-spring);
+}
+
+.lm-polaroid img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 3px;
+}
+
+.lm-tag {
+    position: absolute;
+    left: 7%;
+    bottom: 3.5%;
+    font-size: clamp(0.8125rem, 0.6rem + 0.5vw, 1.0625rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+}
+
+.lm-hang:focus-visible { outline: none; }
+.lm-hang:focus-visible .lm-polaroid { outline: 3px solid var(--color-ink); outline-offset: 3px; }
+
+@media (hover: hover) and (pointer: fine) {
+    .lm-hang:hover .lm-polaroid { scale: 1.06; }
+}
+
+@media (max-width: 639px) {
+    .lm-hang--extra { display: none; }
+}
+
+/* ---------- "Por qué Las Manolas": especímenes sobre color ---------- */
+
+.lm-specs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.25rem 0.5rem;
+    align-items: start;
+}
+
+.lm-spec--wide {
+    grid-column: span 2;
+    order: -1;
+}
+
+.lm-spec-tile {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: var(--lm-radius);
+    isolation: isolate;
+}
+
+.lm-spec--wide .lm-spec-tile { aspect-ratio: 8 / 5; }
+
+.lm-spec-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* El plano sí se funde con su campo de color: no es una prenda, no hay un
+   color "fiel" que cuidar, y así queda del tono de la ficha. */
+.lm-map img { mix-blend-mode: multiply; }
+
+.lm-spec figcaption { margin-top: 0.85rem; }
+
+.lm-credit { grid-column: 1 / -1; margin-top: 0; }
+
+@media (max-width: 639px) {
+    .lm-name { font-size: 1.0625rem; }
+    .lm-fact { font-size: 0.9375rem; }
+}
+
+@media (min-width: 640px) {
+    .lm-specs {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2.5rem 0.625rem;
+    }
+
+    .lm-spec--wide { order: 0; }
+}
+
+/* El chat: el mensaje que arma el checkout, tal cual */
+.lm-chat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0 0.9rem 1rem;
+}
+
+.lm-chat-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 -0.9rem auto;
+    padding: 0.8rem 0.9rem;
+    background: #fff;
+    color: #111b21;
+}
+
+.lm-chat-avatar {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: var(--color-ink);
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+}
+
+.lm-chat-name { font-size: 0.9375rem; font-weight: 600; line-height: 1.2; }
+.lm-chat-status { font-size: 0.8125rem; color: #54656f; line-height: 1.2; }
+
+.lm-bubble {
+    max-width: 88%;
+    padding: 0.6rem 0.75rem;
+    border-radius: 14px;
+    font-size: 1rem;
+    line-height: 1.35;
+    color: #1f2c34;
+}
+
+.lm-bubble--out {
+    align-self: flex-end;
+    background: #d9fdd3;
+    border-bottom-right-radius: 4px;
+    transform-origin: bottom right;
+}
+
+.lm-bubble--in {
+    align-self: flex-start;
+    background: #fff;
+    border-bottom-left-radius: 4px;
+    transform-origin: bottom left;
+}
+
+.lm-bubble-meta {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.2rem;
+    font-size: 0.8125rem;
+    color: #54656f;
+}
+
+.lm-bubble-meta svg { width: 1rem; height: 1rem; color: #027eb5; }
+
+.lm-typing {
+    display: inline-flex;
+    gap: 4px;
+    padding: 0.8rem 0.9rem;
+}
+
+.lm-typing i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #8696a0;
+    animation: lm-dot 1.2s ease-in-out infinite;
+}
+
+.lm-typing i:nth-child(2) { animation-delay: 0.15s; }
+.lm-typing i:nth-child(3) { animation-delay: 0.3s; }
+
+/* El plano se mueve despacito: el "cuadro en movimiento" de la sección */
+.lm-map img {
+    animation: lm-pan 26s ease-in-out infinite alternate;
+}
+
+/* ==========================================
+   ENTRADAS (solo con JS: la sección recibe .is-in al aparecer)
+========================================== */
+
+.js [data-enter],
+.js .lm-ch,
+.js .lm-spec figcaption,
+.js .lm-bubble {
+    opacity: 0;
+}
+
+.js [data-why] .lm-spec-tile { clip-path: inset(100% 0 0 0 round var(--lm-radius)); }
+
+.js .is-in .lm-ch {
+    animation: lm-boing 900ms var(--lm-spring) both;
+    animation-delay: calc(var(--d, 0) * 28ms);
+}
+
+.js .is-in [data-enter] {
+    animation: lm-rise 800ms var(--lm-ease-out) both;
+    animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+.js .is-in .lm-spec .lm-spec-tile {
+    animation: lm-clip-up 1s var(--lm-ease-out) both;
+    animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+.js .is-in .lm-spec .lm-spec-tile > img {
+    animation: lm-settle 1.4s var(--lm-ease-out) both;
+    animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+.js .is-in .lm-map img {
+    animation: lm-settle 1.4s var(--lm-ease-out) both, lm-pan 26s ease-in-out 1.4s infinite alternate;
+    animation-delay: calc(var(--i, 0) * 90ms), calc(var(--i, 0) * 90ms + 1.4s);
+}
+
+.js .is-in .lm-spec figcaption {
+    animation: lm-rise-sm 600ms var(--lm-ease-out) both;
+    animation-delay: calc(var(--i, 0) * 90ms + 250ms);
+}
+
+.js .is-in .lm-bubble--out {
+    animation: lm-pop 550ms var(--lm-spring) 900ms both;
+}
+
+.js .is-in .lm-bubble--in {
+    animation: lm-pop 450ms var(--lm-spring) 1700ms both;
+}
+
+@keyframes lm-boing {
+    from { opacity: 0; translate: 0 0.8em; rotate: var(--r, -12deg); scale: 0.3; }
+    50% { opacity: 1; }
+    to { opacity: 1; translate: 0 0; rotate: 0deg; scale: 1; }
+}
+
+@keyframes lm-jelly {
+    0% { scale: 1 1; translate: 0 0; }
+    25% { scale: 1.25 0.78; translate: 0 0.04em; }
+    40% { scale: 0.82 1.2; translate: 0 -0.12em; }
+    55% { scale: 1.1 0.92; translate: 0 0; }
+    70% { scale: 0.96 1.04; }
+    100% { scale: 1 1; translate: 0 0; }
+}
+
+@keyframes lm-rise { from { opacity: 0; translate: 0 24px; } to { opacity: 1; translate: 0 0; } }
+@keyframes lm-rise-sm { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
+@keyframes lm-pop { from { opacity: 0; scale: 0.9; } to { opacity: 1; scale: 1; } }
+@keyframes lm-settle { from { scale: 1.15; } to { scale: 1; } }
+@keyframes lm-pan { from { transform: scale(1.04) translate(-1.5%, -1%); } to { transform: scale(1.1) translate(1.5%, 1%); } }
+@keyframes lm-dot { 0%, 60%, 100% { opacity: 0.35; translate: 0 0; } 30% { opacity: 1; translate: 0 -3px; } }
+
+@keyframes lm-clip-up {
+    from { clip-path: inset(100% 0 0 0 round var(--lm-radius)); }
+    to { clip-path: inset(0 0 0 0 round var(--lm-radius)); }
+}
+
+@keyframes lm-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* ==========================================
+   MOVIMIENTO REDUCIDO: se mantiene el fundido (ayuda a entender que algo
+   apareció), se saca todo desplazamiento, rebote, recorte y loop. El
+   tendedero queda quieto, con las prendas apenas torcidas (lo maneja JS).
+========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .js [data-why] .lm-spec-tile { clip-path: none; }
+
+    .js .is-in .lm-ch,
+    .js .is-in [data-enter],
+    .js .is-in .lm-spec figcaption,
+    .js .is-in .lm-bubble--out,
+    .js .is-in .lm-bubble--in,
+    .js .is-in .lm-spec .lm-spec-tile {
+        animation: lm-fade 400ms ease both;
+    }
+
+    .js .is-in .lm-spec .lm-spec-tile > img,
+    .js .is-in .lm-map img,
+    .lm-map img,
+    .lm-typing i,
+    .lm-ch:hover .lm-ch-i {
+        animation: none;
+    }
+
+    .lm-hang:hover .lm-polaroid { scale: 1; }
+    .lm-btn:active { transform: none; }
+}
